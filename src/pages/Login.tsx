@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Leaf } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -11,7 +11,9 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    // TODO : 추후 API 연동 및 로그인 로직 구현
+    e.preventDefault();
     alert("로그인");
   };
 
@@ -25,7 +27,7 @@ function Login() {
         <p className="login-desc">
           환경 운동가들을 위한 커뮤니티에 오신 것을 환영합니다
         </p>
-        <form>
+        <form onSubmit={handleLogin}>
           <label className="login-label">이메일</label>
           <Input
             type="email"
@@ -39,7 +41,7 @@ function Login() {
             value={password}
             onChange={e => setPassword(e.target.value)}
           />
-          <Button type="button" onClick={handleLogin}>
+          <Button type="submit">
             로그인
           </Button>
         </form>
