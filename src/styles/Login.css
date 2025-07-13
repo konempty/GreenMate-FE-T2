@@ -1,0 +1,88 @@
+.login-background {
+    min-height: 100vh;
+    width: 100vw;
+    background: #f5f6f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.login-container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+    padding: 40px 32px;
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.login-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+.login-title {
+    font-size: 2rem;
+    font-weight: 700;
+}
+.login-desc {
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+    text-align: center;
+}
+.login-label {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 4px; 
+}
+.login-footer {
+    margin-top: 24px;
+    text-align: center;
+    color: #2e2e2e;
+    font-size: 0.9rem;
+}
+.login-signup-link {
+    color: #171717;
+    font-weight: 700;
+    margin-left: 4px;
+}
+
+form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-sizing: border-box;
+}
+
+input[type="email"], input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-bottom: 8px;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+input[type="email"]:focus, input[type="password"]:focus {
+  border-color: #222;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: #222;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s;
+}
