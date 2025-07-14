@@ -28,22 +28,30 @@ function Login() {
           환경 운동가들을 위한 커뮤니티에 오신 것을 환영합니다
         </p>
         <form onSubmit={handleLogin}>
-          <label className="login-label">이메일</label>
-          <Input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            placeholder="your@email.com"
-          />
-          <label className="login-label">비밀번호</label>
-          <Input
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-          />
-          <Button type="submit">
-            로그인
-          </Button>
+          <div className="login-form-group">
+            <label className="login-label" htmlFor="email">
+              이메일
+            </label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="이메일을 입력하세요"
+            />
+          </div>
+          <div className="login-form-group">
+            <label className="login-label" htmlFor="password">
+              비밀번호
+            </label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <Button type="submit">로그인</Button>
         </form>
         <div className="login-footer">
           계정이 없으신가요?{" "}
