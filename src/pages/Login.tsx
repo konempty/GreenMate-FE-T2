@@ -38,6 +38,7 @@ function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="이메일을 입력하세요"
+              className="login-input"
             />
           </div>
           <div className="login-form-group">
@@ -49,9 +50,12 @@ function Login() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              className="login-input"
             />
           </div>
-          <Button type="submit">로그인</Button>
+          <Button type="submit" className="login-button">
+            로그인
+          </Button>
         </form>
         <div className="login-footer">
           계정이 없으신가요?{" "}
