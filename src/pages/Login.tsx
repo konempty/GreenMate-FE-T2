@@ -50,6 +50,7 @@ function Login() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="비밀번호를 입력하세요"
               className="login-input"
             />
           </div>
