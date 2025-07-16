@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import Input from "../components/Input";
 import Button from "../components/Button";
 
-import "../styles/Login.css"; 
+import "../styles/Login.css";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -21,7 +21,7 @@ function Login() {
     <div className="login-background">
       <div className="login-container">
         <div className="login-header">
-          <Leaf size={48} color="#16a34a" />
+          <Leaf size={48} className="login-leaf-icon" />
           <span className="login-title">GreenMate</span>
         </div>
         <p className="login-desc">
