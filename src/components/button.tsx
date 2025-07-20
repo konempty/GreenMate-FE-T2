@@ -1,6 +1,4 @@
-// src/components/button.tsx
-
-import * as React from "react";
+import { forwardRef } from "react";
 import classNames from "classnames";
 
 export type ButtonVariant = "default" | "outline" | "secondary" | "link";
@@ -11,7 +9,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   size?: ButtonSize;
 }
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "default", size = "default", ...props }, ref) => {
     const baseClasses =
       "inline-flex items-center justify-center rounded-md font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors";

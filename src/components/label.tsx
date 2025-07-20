@@ -1,9 +1,7 @@
-// src/components/label.tsx
-
-import * as React from "react";
+import { forwardRef } from "react";
 import classNames from "classnames";
 
-export const Label = React.forwardRef<
+export const Label = forwardRef<
   HTMLLabelElement,
   React.LabelHTMLAttributes<HTMLLabelElement>
 >(({ className, ...props }, ref) => {

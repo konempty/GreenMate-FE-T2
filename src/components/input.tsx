@@ -1,9 +1,7 @@
-// src/components/input.tsx
-
-import * as React from "react";
+import { forwardRef } from "react";
 import classNames from "classnames";
 
-export const Input = React.forwardRef<
+export const Input = forwardRef<
   HTMLInputElement,
   React.InputHTMLAttributes<HTMLInputElement>
 >(({ className, type, ...props }, ref) => {

@@ -1,10 +1,8 @@
-// src/pages/SignUp.tsx
-
 import { Input } from "../components/input";
 import { Label } from "../components/label";
 import { Button } from "../components/button";
 import { Leaf, Upload } from "lucide-react";
-
+import { Link } from 'react-router-dom';
 import "../styles/SignUp.css";
 
 const SignUp = () => {
@@ -60,7 +58,7 @@ const SignUp = () => {
         <Button className="signup-submit">회원가입</Button>
 
         <p className="signup-login-link">
-          이미 계정이 있으신가요? <a href="/login">로그인</a>
+          이미 계정이 있으신가요? <Link to="/login">로그인</Link>
         </p>
       </div>
     </div>
