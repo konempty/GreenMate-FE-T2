@@ -1,3 +1,16 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #f3f4f6; 
+  font-family: 'Noto Sans KR', sans-serif;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 .signup-container {
   display: flex;
   justify-content: center;
@@ -9,10 +22,10 @@
 
 .signup-card {
   background-color: white;
-  padding: 1rem;
+  padding: 1.8rem; 
   border-radius: 1rem;
   width: 100%;
-  max-width: 500px;
+  max-width: 400px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
@@ -39,7 +52,7 @@
 .signup-subtitle {
   text-align: center;
   color: #4b5563;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem; 
   font-size: 0.875rem;
 }
 
@@ -48,61 +61,50 @@
   flex-direction: column;
   align-items: flex-start; 
   gap: 0.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
+
 .signup-label {
   display: block;
   text-align: left;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   color: black;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.2rem;
 }
 
 .signup-input {
-  width: 90%;
-  height: 1.5rem;
-  padding: 0.8rem 0.75rem;
-  font-size: 0.875rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
   background-color: white;
   color: black;
+  border-radius: 0.3rem;
+  border: 1px solid #bcbcbc;
+  height: 2.4rem;
 }
 
 .signup-row {
   display: flex;
   gap: 0.5rem;
   align-items: center;
+  width: 100%;
 }
 
 .signup-button {
-  height: 2.25rem;
+  height: 2rem;
   padding: 0 0.75rem;
-  font-size: 0.875rem;
-  line-height: 1.5rem;
-}
-
-.signup-submit {
-  width: 100%;
-  margin-top: 1.5rem;
-  height: 2.5rem;
-  font-size: 1rem;
-}
-
-.signup-login-link {
-  text-align: center;
-  font-size: 0.875rem;
-  color: #6b7280;
-  margin-top: 1rem;
+  font-size: 0.85rem;
 }
 
 .signup-check-btn {
   background-color: #a8a8a8;
   color: white;
-  padding: 0 1rem;
-  height: 2.5rem;
+  padding: 0 0.75rem;
+  height: 2rem;
   border-radius: 0.375rem;
   white-space: nowrap;
   border: none;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   cursor: pointer;
 }
 
@@ -113,11 +115,40 @@
 .signup-upload-btn {
   background-color: #000;
   color: white;
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 0.75rem;
   border-radius: 0.375rem;
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.signup-submit {
+  width: 100%;
+  margin-top: 1rem;
+  height: 2rem;
+  font-size: 0.95rem;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+}
+
+.signup-login-link {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-top: 0.75rem;
+}
+
+.signup-login-link a {
+  color: #6366f1;
+  text-decoration: none;
+  margin-left: 0.25rem;
+}
+
+.signup-login-link a:hover {
+  text-decoration: underline;
 }
