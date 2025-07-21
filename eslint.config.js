@@ -4,6 +4,8 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 import { globalIgnores } from 'eslint/config'
+import prettier from 'eslint-plugin-prettier'
+import prettierConfig from 'eslint-config-prettier'
 
 export default tseslint.config([
   globalIgnores(['dist']),
@@ -12,9 +14,13 @@ export default tseslint.config([
     extends: [
       js.configs.recommended,
       ...tseslint.configs.recommendedTypeChecked,
-      reactHooks.configs['recommended-latest'],
-      reactRefresh.configs.vite,
+      prettierConfig,
     ],
+    plugins: {
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+      prettier: prettier,
+    },
     languageOptions: {
       ecmaVersion: 'latest',
       globals: globals.browser,
@@ -22,6 +28,11 @@ export default tseslint.config([
         project: ['./tsconfig.app.json', './tsconfig.node.json'],
         tsconfigRootDir: import.meta.dirname,
       },
+    },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      'react-refresh/only-export-components': 'warn',
+      'prettier/prettier': 'error',
     },
   },
 ])

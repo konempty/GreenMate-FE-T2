@@ -1,6 +1,6 @@
-import { Input } from "../components/input";
+import { Input } from "../components/SignInput";
 import { Label } from "../components/label";
-import { Button } from "../components/button";
+import { Button } from "../components/SignButton";
 import { Leaf, Upload } from "lucide-react";
 import { Link } from 'react-router-dom';
 import "../styles/SignUp.css";
