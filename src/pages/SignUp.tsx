@@ -3,9 +3,22 @@ import { Label } from "../components/label";
 import { Button } from "../components/SignButton";
 import { Leaf, Upload } from "lucide-react";
 import { Link } from 'react-router-dom';
+import { useRef, useState } from "react"; 
+
 import "../styles/SignUp.css";
 
 const SignUp = () => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file); 
+      setPreviewUrl(url);
+    }
+  };
+
   return (
     <div className="signup-container">
       <div className="signup-card">
@@ -43,16 +56,29 @@ const SignUp = () => {
 
         <div className="signup-field">
           <Label htmlFor="profileImage" className="signup-label">프로필 이미지</Label>
+          <input
+            type="file"
+            id="profileImage"
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            accept="image/*"
+            onChange={handleImageChange}
+          />
           <Button
             type="button"
             className="signup-upload-btn"
-            onClick={() =>
-              document.getElementById("profileImage")?.click()
-            }
+            onClick={() => fileInputRef.current?.click()}
           >
-            <Upload  width="20px" height="20px" />
+            <Upload width="20px" height="20px" />
             이미지 업로드
           </Button>
+          {previewUrl && (
+            <img
+              src={previewUrl}
+              alt="미리보기"
+              style={{ marginTop: "1rem", width: "100px", height: "100px", objectFit: "cover", borderRadius: "8px" }}
+            />
+          )}
         </div>
 
         <Button className="signup-submit">회원가입</Button>

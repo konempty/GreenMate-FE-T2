@@ -142,13 +142,3 @@ html, body {
   color: #6b7280;
   margin-top: 0.75rem;
 }
-
-.signup-login-link a {
-  color: #6366f1;
-  text-decoration: none;
-  margin-left: 0.25rem;
-}
-
-.signup-login-link a:hover {
-  text-decoration: underline;
-}
