@@ -83,9 +83,16 @@ const SignUp = () => {
 
         <Button className="signup-submit">회원가입</Button>
 
-        <p className="signup-login-link">
+        <div className="signup-footer">
+          이미 계정이 있으신가요?{" "}
+          <Link to="/login" className="signup-login-link">
+            로그인
+          </Link>
+        </div>
+
+        {/* <p className="signup-login-link">
           이미 계정이 있으신가요? <Link to="/login">로그인</Link>
-        </p>
+        </p> */}
       </div>
     </div>
   );

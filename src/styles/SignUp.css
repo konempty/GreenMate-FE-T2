@@ -136,9 +136,15 @@ html, body {
   cursor: pointer;
 }
 
+.signup-footer {
+    margin-top: 24px;
+    text-align: center;
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+}
+
 .signup-login-link {
-  text-align: center;
-  font-size: 0.85rem;
-  color: #6b7280;
-  margin-top: 0.75rem;
+  color: var(--color-text-primary);
+  font-weight: 700;
+  margin-left: 4px;
 }
