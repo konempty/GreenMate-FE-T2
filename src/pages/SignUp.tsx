@@ -2,8 +2,8 @@ import { Input } from "../components/SignInput";
 import { Label } from "../components/label";
 import { Button } from "../components/SignButton";
 import { Leaf, Upload } from "lucide-react";
-import { Link } from 'react-router-dom';
-import { useRef, useState } from "react"; 
+import { Link } from "react-router-dom";
+import { useRef, useState } from "react";
 
 import "../styles/SignUp.css";
 
@@ -14,7 +14,7 @@ const SignUp = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const url = URL.createObjectURL(file); 
+      const url = URL.createObjectURL(file);
       setPreviewUrl(url);
     }
   };
@@ -32,30 +32,56 @@ const SignUp = () => {
         </p>
 
         <div className="signup-field">
-          <Label htmlFor="nickname" className="signup-label">닉네임</Label>
+          <Label htmlFor="nickname" className="signup-label">
+            닉네임
+          </Label>
           <div className="signup-row">
-            <Input id="nickname" placeholder="홍길동" className="signup-input" />
-            <Button type="button" className="signup-check-btn"> 중복 확인 </Button>
+            <Input
+              id="nickname"
+              placeholder="홍길동"
+              className="signup-input"
+            />
+            <Button type="button" className="signup-check-btn">
+              {" "}
+              중복 확인{" "}
+            </Button>
           </div>
         </div>
 
         <div className="signup-field">
-          <Label htmlFor="email" className="signup-label">이메일</Label>
-          <Input id="email" type="email" placeholder="your@email.com" className="signup-input" />
+          <Label htmlFor="email" className="signup-label">
+            이메일
+          </Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="your@email.com"
+            className="signup-input"
+          />
         </div>
 
         <div className="signup-field">
-          <Label htmlFor="password" className="signup-label">비밀번호</Label>
+          <Label htmlFor="password" className="signup-label">
+            비밀번호
+          </Label>
           <Input id="password" type="password" className="signup-input" />
         </div>
 
         <div className="signup-field">
-          <Label htmlFor="passwordConfirm" className="signup-label">비밀번호 확인</Label>
-          <Input id="passwordConfirm" type="password" className="signup-input" />
+          <Label htmlFor="passwordConfirm" className="signup-label">
+            비밀번호 확인
+          </Label>
+          <Input
+            id="passwordConfirm"
+            type="password"
+            className="signup-input"
+          />
         </div>
 
         <div className="signup-field">
-          <Label htmlFor="profileImage" className="signup-label">프로필 이미지</Label>
+          <Label htmlFor="profileImage" className="signup-label">
+            프로필 이미지
+          </Label>
           <input
             type="file"
             id="profileImage"
@@ -76,7 +102,13 @@ const SignUp = () => {
             <img
               src={previewUrl}
               alt="미리보기"
-              style={{ marginTop: "1rem", width: "100px", height: "100px", objectFit: "cover", borderRadius: "8px" }}
+              style={{
+                marginTop: "1rem",
+                width: "100px",
+                height: "100px",
+                objectFit: "cover",
+                borderRadius: "8px",
+              }}
             />
           )}
         </div>
