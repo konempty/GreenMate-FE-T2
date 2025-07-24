@@ -1,7 +1,7 @@
 import { PageNavigation } from "../components/PageNavigation";
-import "../styles/Post_View.css";
+import "../styles/Post.css";
 
-const Post_View = () => {
+const Post = () => {
   return (
     <div>
       <PageNavigation />
@@ -9,4 +9,4 @@ const Post_View = () => {
   );
 };
 
-export default Post_View;
+export default Post;
