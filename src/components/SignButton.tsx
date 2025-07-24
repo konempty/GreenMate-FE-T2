@@ -4,7 +4,8 @@ import classNames from "classnames";
 export type ButtonVariant = "default" | "outline" | "secondary" | "link";
 export type ButtonSize = "sm" | "default" | "lg";
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
 }
@@ -30,11 +31,16 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
-        className={classNames(baseClasses, variantClasses, sizeClasses, className)}
+        className={classNames(
+          baseClasses,
+          variantClasses,
+          sizeClasses,
+          className,
+        )}
         {...props}
       />
     );
-  }
+  },
 );
 
 Button.displayName = "Button";
