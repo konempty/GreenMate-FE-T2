@@ -1,0 +1,17 @@
+:root {
+  --color-post-h1: #2E8D4F;
+  --color-post-h2: #8AB39A;
+  --color-post-text: #D4D6DA;
+  --color-post-text-bold: #909090;
+
+  --color-post-button: #15A249;
+  --color-post-button-text: #FFFFFF;
+  --color-post-title: #EFFCF3;
+  --color-post-title-text: #36794F;
+  --color-post-board: #FEFEFE;
+  --color-post-board-button: #151515;
+}
+.post-view-container {
+  padding: 20px;
+  background-color: var(--color-post-board);
+}

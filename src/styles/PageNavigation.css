@@ -1,0 +1,50 @@
+:root {
+  --color-nav-choice-true: #213547;
+  --color-nav-choice-false: #909090;
+  --color-nav-background: #FEFEFE;
+  --color-nav-shadow:#fefefee5;
+}
+
+.page-nav {
+  width : 95%;
+  height : 45px;
+  margin: 0 auto; /* 수평 중앙 정렬 */
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 200px;
+
+  background: var(--color-nav-background);
+  padding: 10px 0;
+  border-radius: 12px;
+  border-bottom: 1px solid var(--color-nav-shadow);
+}
+@media (max-width: 1200px) {
+  .page-nav {
+    gap: 100px; /* 작은 화면에서는 간격 줄이기 */
+  }
+}
+@media (max-width: 800px) {
+  .page-nav {
+    gap: 10px; /* 작은 화면에서는 간격 줄이기 */
+  }
+}
+
+.page-nav-button {
+  text-decoration: none;
+  font-size: 1.0rem;
+  font-weight: bold;
+  color: var(--color-nav-choice-false);
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.page-nav-button:hover {
+  color: var(--color-nav-choice-true);
+}
+
+.page-nav-button.active {
+  color: var(--color-nav-choice-true);
+}
