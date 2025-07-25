@@ -92,7 +92,7 @@ const LogoutButton = styled.div`
 
 const Header = ({ user }: HeaderProps) => {
   const [showDropdown, setShowDropdown] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null); // ⬅ 드롭다운 참조
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const defaultUser = {
     nickname: "konempty",
@@ -109,7 +109,6 @@ const Header = ({ user }: HeaderProps) => {
     alert("로그아웃 되었습니다.");
   };
 
-  // 외부 클릭 감지
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -133,7 +132,7 @@ const Header = ({ user }: HeaderProps) => {
         <StyledLeaf />
         <Title>GreenMate</Title>
       </LogoWrapper>
-      <ProfileWrapper ref={dropdownRef}>
+      <ProfileWrapper>
         <ProfileImage src={profileImage} alt="프로필" onClick={handleToggle} />
         {showDropdown && (
           <Dropdown>
