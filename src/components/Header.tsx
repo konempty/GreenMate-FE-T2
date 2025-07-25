@@ -1,6 +1,14 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { Leaf, LogOut } from "lucide-react";
+import profileImage from "./images/profile.jpg";
+
+interface HeaderProps {
+  user?: {
+    nickname: string;
+    email: string;
+  };
+}
 
 const HeaderBox = styled.header`
   background-color: white;
@@ -82,8 +90,16 @@ const LogoutButton = styled.div`
   }
 `;
 
-const Header = () => {
+const Header = ({ user }: HeaderProps) => {
   const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null); // ⬅ 드롭다운 참조
+
+  const defaultUser = {
+    nickname: "konempty",
+    email: "1117plus@gmail.com",
+  };
+
+  const currentUser = user || defaultUser;
 
   const handleToggle = () => {
     setShowDropdown((prev) => !prev);
@@ -93,22 +109,36 @@ const Header = () => {
     alert("로그아웃 되었습니다.");
   };
 
+  // 외부 클릭 감지
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <HeaderBox>
       <LogoWrapper>
         <StyledLeaf />
         <Title>GreenMate</Title>
       </LogoWrapper>
-      <ProfileWrapper>
-        <ProfileImage
-          src="src/components/images/profile.jpg"
-          alt="프로필"
-          onClick={handleToggle}
-        />
+      <ProfileWrapper ref={dropdownRef}>
+        <ProfileImage src={profileImage} alt="프로필" onClick={handleToggle} />
         {showDropdown && (
           <Dropdown>
-            <Nickname>konempty</Nickname>
-            <Email>1117plus@gmail.com</Email>
+            <Nickname>{currentUser.nickname}</Nickname>
+            <Email>{currentUser.email}</Email>
             <LogoutButton onClick={handleLogout}>
               <LogOut /> 로그아웃
             </LogoutButton>
