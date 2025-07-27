@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Post from "./pages/Post";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
-import Header from "./components/Header";
+import Education from "./pages/Education";
 
 function App() {
   return (
@@ -12,7 +12,7 @@ function App() {
         <Route path="/post" element={<Post />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/header" element={<Header />} />
+        <Route path="/recycling-education" element={<Education />} />
       </Routes>
     </BrowserRouter>
   );
