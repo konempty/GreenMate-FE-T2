@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "../styles/Education.css";
 import Header from "../components/Header";
 import { PageNavigation } from "../components/PageNavigation";
@@ -50,8 +50,24 @@ const items: RecycleItem[] = [
   },
 ];
 
-const RecycleLearning = () => {
+const Education = () => {
   const [selectedItem, setSelectedItem] = useState<RecycleItem | null>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (selectedItem && closeButtonRef.current) {
+      closeButtonRef.current.focus();
+    }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setSelectedItem(null);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [selectedItem]);
 
   return (
     <div className="recycle-page">
@@ -85,11 +101,18 @@ const RecycleLearning = () => {
       </main>
 
       {selectedItem && (
-        <div className="modal-overlay" onClick={() => setSelectedItem(null)}>
+        <div
+          className="modal-overlay"
+          onClick={() => setSelectedItem(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-title"
+        >
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button
               className="modal-close"
               onClick={() => setSelectedItem(null)}
+              ref={closeButtonRef}
             >
               ×
             </button>
@@ -98,7 +121,9 @@ const RecycleLearning = () => {
               alt={selectedItem.title}
               className="modal-image"
             />
-            <h3 className="modal-title">{selectedItem.title} 재활용 방법</h3>
+            <h3 id="modal-title" className="modal-title">
+              {selectedItem.title} 재활용 방법
+            </h3>
             <ul className="modal-steps">
               {selectedItem.steps.map((step, index) => (
                 <li key={index}>
@@ -117,4 +142,4 @@ const RecycleLearning = () => {
   );
 };
 
-export default RecycleLearning;
+export default Education;
