@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import "../styles/Education.css";
 import Header from "../components/Header";
 import { PageNavigation } from "../components/PageNavigation";
+import RecycleInfoModal from "../components/RecycleInfoModal";
 
 type RecycleItem = {
   title: string;
@@ -101,38 +102,10 @@ const Education = () => {
       </main>
 
       {selectedItem && (
-        <div
-          className="modal-overlay"
-          onClick={() => setSelectedItem(null)}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="modal-title"
-        >
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button
-              className="modal-close"
-              onClick={() => setSelectedItem(null)}
-              ref={closeButtonRef}
-            >
-              ×
-            </button>
-            <img
-              src={selectedItem.image}
-              alt={selectedItem.title}
-              className="modal-image"
-            />
-            <h3 id="modal-title" className="modal-title">
-              {selectedItem.title} 재활용 방법
-            </h3>
-            <ul className="modal-steps">
-              {selectedItem.steps.map((step, index) => (
-                <li key={index}>
-                  {index + 1}. {step}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+        <RecycleInfoModal
+          item={selectedItem}
+          onClose={() => setSelectedItem(null)}
+        />
       )}
 
       <footer className="footer">
