@@ -3,6 +3,7 @@ import "../styles/Education.css";
 import Header from "../components/Header";
 import { PageNavigation } from "../components/PageNavigation";
 import RecycleInfoModal from "../components/RecycleInfoModal";
+import Footer from "../components/Footer";
 
 type RecycleItem = {
   title: string;
@@ -109,9 +110,7 @@ const Education = () => {
         />
       )}
 
-      <footer className="footer">
-        © 2024 GreenMate. All rights reserved.
-      </footer>
+      <Footer />
     </div>
   );
 };
