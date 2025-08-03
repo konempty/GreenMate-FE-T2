@@ -93,11 +93,12 @@ const Education = () => {
         </div>
 
         <div className="recycle-tip">
-          <p>
-            ♻️ 올바른 분리수거는 환경 보호의 첫걸음입니다. 각 품목별 재활용
-            방법을 숙지하고 실천해주세요. 자세한 정보는 환경부 홈페이지를
-            참고하세요.
-          </p>
+          <span className="material-icons-outlined">info</span>
+          <span>
+            올바른 분리수거는 환경 보호의 첫 걸음입니다. 각 품목별 재활용 방법을
+            숙지하고 실천해주세요. 더 자세한 정보는 환경부 홈페이지를
+            참조하세요.
+          </span>
         </div>
       </main>
 
