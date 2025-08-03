@@ -93,12 +93,7 @@ const Education = () => {
         </div>
 
         <div className="recycle-tip">
-          <span
-            className="material-icons-outlined"
-            style={{ color: "green", marginRight: "8px" }}
-          >
-            info
-          </span>
+          <span className="material-icons-outlined">info</span>
           <span>
             올바른 분리수거는 환경 보호의 첫 걸음입니다. 각 품목별 재활용 방법을
             숙지하고 실천해주세요. 더 자세한 정보는 환경부 홈페이지를

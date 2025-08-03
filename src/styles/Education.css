@@ -122,3 +122,10 @@
   font-size: 15px;
   line-height: 1.6;
 }
+
+.recycle-tip .material-icons-outlined {
+  color: green;
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 2.5px;
+}
