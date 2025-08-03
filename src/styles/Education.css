@@ -110,3 +110,15 @@
   padding-left: 0;
 }
 
+.recycle-tip {
+  background-color: #f0fdf4;
+  color: #000000; 
+  border-radius: 8px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 32px;
+  font-size: 15px;
+  line-height: 1.6;
+}
