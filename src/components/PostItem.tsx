@@ -11,11 +11,7 @@ interface Post {
   participants: number;
 }
 
-interface PostItemProps {
-  post: Post;
-}
-
-const PostItem = ({ post }: PostItemProps) => {
+const PostItem = ({ post }: { post: Post }) => {
   return (
     <div className="post-item">
       <div className="post-item-title">

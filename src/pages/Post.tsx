@@ -5,6 +5,7 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import PostItem from "../components/PostItem";
 import { Search } from "lucide-react";
+import { useDebounce } from "../hooks/useDebounce";
 
 import "../styles/Post.css";
 
@@ -61,14 +62,15 @@ const MOCK_POSTS: Post[] = [
 const Post = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const filteredPosts = useMemo(() => {
-    const lowercasedSearchTerm = searchTerm.toLowerCase();
+    const lowercasedSearchTerm = debouncedSearchTerm.toLowerCase();
     return MOCK_POSTS.filter(
       (post) =>
         post.title.toLowerCase().includes(lowercasedSearchTerm) ||
         post.description.toLowerCase().includes(lowercasedSearchTerm),
     );
-  }, [searchTerm]);
+  }, [debouncedSearchTerm]);
 
   return (
     <div className="post-container">
