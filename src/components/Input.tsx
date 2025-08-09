@@ -3,10 +3,12 @@ import React from "react";
 interface InputProps {
   id?: string;
   type: string;
-  value: string;
+  value?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   className?: string;
+  accept?: string;
+  multiple?: boolean;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -16,6 +18,8 @@ const Input: React.FC<InputProps> = ({
   onChange,
   placeholder,
   className,
+  accept,
+  multiple,
 }) => {
   return (
     <input
@@ -25,6 +29,8 @@ const Input: React.FC<InputProps> = ({
       onChange={onChange}
       placeholder={placeholder}
       className={className}
+      accept={accept}
+      multiple={multiple}
     />
   );
 };
