@@ -16,7 +16,11 @@ interface ImageUploadProps {
   className?: string;
 }
 
-const ImageUpload = ({ maxImages = 5, onChange, className }: ImageUploadProps) => {
+const ImageUpload = ({
+  maxImages = 5,
+  onChange,
+  className,
+}: ImageUploadProps) => {
   const [images, setImages] = useState<ImageData[]>([]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,9 +45,7 @@ const ImageUpload = ({ maxImages = 5, onChange, className }: ImageUploadProps) =
 
   return (
     <div className={className}>
-      <div className="image-upload-info">
-        선택된 파일 : {images.length}개
-      </div>
+      <div className="image-upload-info">선택된 파일 : {images.length}개</div>
       <div className="image-upload-container">
         {images.map((image, index) => (
           <div key={index} className="image-upload-preview-wrapper">

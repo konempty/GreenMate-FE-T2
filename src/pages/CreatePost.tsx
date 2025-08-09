@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import { PageNavigation } from "../components/PageNavigation";
+import Footer from "../components/Footer";
 
 import Button from "../components/Button";
 import Input from "../components/Input";
@@ -15,6 +16,8 @@ const CreatePost = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [images, setImages] = useState<{ file: File; preview: string }[]>([]);
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
 
   const handleImageChange = (newImages: { file: File; preview: string }[]) => {
     setImages(newImages);
@@ -26,7 +29,7 @@ const CreatePost = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // 폼 제출 로직
-    console.log({ title, description, images });
+    console.log({ title, description, images, date, time });
     void navigate("/post");
   };
 
@@ -69,6 +72,28 @@ const CreatePost = () => {
               className="create-post-image-upload"
             />
           </div>
+          <div className="create-post-form-row">
+            <div className="create-post-form-group create-post-form-half">
+              <Label className="create-post-label">마감 날짜</Label>
+              <Input
+                id="date"
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="create-post-input"
+              />
+            </div>
+            <div className="create-post-form-group create-post-form-half">
+              <Label className="create-post-label">마감 시간</Label>
+              <Input
+                id="time"
+                type="time"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                className="create-post-input"
+              />
+            </div>
+          </div>
           <div className="create-post-buttons">
             <Button className="create-post-cancel" onClick={handleCancel}>
               취소
@@ -79,6 +104,7 @@ const CreatePost = () => {
           </div>
         </form>
       </main>
+      <Footer />
     </div>
   );
 };

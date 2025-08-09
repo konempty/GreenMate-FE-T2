@@ -12,10 +12,11 @@
     --color-create-post-button-black: #151515;
     --color-create-post-button-black-hover: #3a3a3a;
 }
+
 .header {
   display: flex;
   flex-direction: column;
-  gap: 2rem; 
+  gap: 2rem;
   padding: 0;
   margin: 0;
 }
@@ -24,6 +25,7 @@
   max-width: 800px;
   margin: 0 auto;
   margin-top: 2rem;
+  margin-bottom: 2rem;
 
   background-color: var(--color-create-post-background);
   border-radius: 8px;
@@ -37,12 +39,21 @@
   margin-bottom: 24px;
   color: var(--color-create-post-h1);
 }
+
 .create-post-form-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin-bottom: 1rem;
 }
+.create-post-form-row {
+  display: flex;
+  gap: 16px;
+}
+.create-post-form-half {
+  flex: 1;
+}
+
 .create-post-label {
   font-weight: 500;
   color: var(--color-create-post-text-black);
