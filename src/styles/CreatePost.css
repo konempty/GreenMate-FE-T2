@@ -1,0 +1,106 @@
+:root {
+    --color-create-post-h1: #151515;
+    --color-create-post-background: #FEFEFE;
+    --color-create-post-text-gray: #909090;
+    --color-create-post-text-black: #151515;
+    --color-create-post-text-white: #FFFFFF;
+    --color-create-post-shadow: rgba(0, 0, 0, 0.1);
+    --color-create-post-border: #e5e5e5;
+
+    --color-create-post-button-white: #f5f5f5;
+    --color-create-post-button-white-hover: #e0e0e0;
+    --color-create-post-button-black: #151515;
+    --color-create-post-button-black-hover: #3a3a3a;
+
+
+}
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; 
+  padding: 0;
+  margin: 0;
+}
+
+.create-post-main {
+  max-width: 800px;
+  margin: 0 auto;
+  margin-top: 2rem;
+
+  background-color: var(--color-create-post-background);
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 4px var(--color-create-post-shadow);
+}
+.create-post-title {
+  font-size: 24px;
+  font-weight: 500;
+  margin-top: 0px;
+  margin-bottom: 24px;
+  color: var(--color-create-post-h1);
+}
+.create-post-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+.create-post-label {
+  font-weight: 500;
+  color: var(--color-create-post-text-black);
+  font-size: 14px;
+}
+.create-post-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-create-post-border);
+  border-radius: 4px;
+  color: var(--color-create-post-text-black);
+  font-size: 14px;
+}
+.create-post-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-create-post-border);
+  border-radius: 4px;
+  font-size: 14px;
+  resize: vertical;
+  color: var(--color-create-post-text-black);
+  font-family: inherit;
+}
+
+.create-post-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.create-post-cancel {
+  background-color: var(--color-create-post-button-white);
+  color: var(--color-create-post-text-black);
+  border: 1px solid var(--color-create-post-border);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.create-post-cancel:hover {
+  background-color: var(--color-create-post-button-white-hover);
+}
+
+.create-post-submit {
+  background-color: var(--color-create-post-button-black);
+  color: var(--color-create-post-text-white);
+  border: 1px solid var(--color-create-post-border);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.create-post-submit:hover {
+  background-color: var(--color-create-post-button-black-hover);
+}
