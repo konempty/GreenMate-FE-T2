@@ -10,6 +10,7 @@ interface InputProps {
   accept?: string;
   multiple?: boolean;
   maxLength?: number;
+  min?: string; // 추가
 }
 
 const Input: React.FC<InputProps> = ({
@@ -22,6 +23,7 @@ const Input: React.FC<InputProps> = ({
   accept,
   multiple,
   maxLength,
+  min, // 추가
 }) => {
   return (
     <input
@@ -34,6 +36,7 @@ const Input: React.FC<InputProps> = ({
       accept={accept}
       multiple={multiple}
       maxLength={maxLength}
+      min={min} // 추가
     />
   );
 };

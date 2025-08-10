@@ -13,6 +13,7 @@ import type { AreaData } from "../types/mapArea";
 import type { ImageData } from "../types/imageUpload";
 
 import "../styles/CreatePost.css";
+
 const CreatePost = () => {
   const navigate = useNavigate();
 
@@ -25,6 +26,15 @@ const CreatePost = () => {
   const [areaData, setAreaData] = useState<AreaData>(null);
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  // 현재 날짜 가져오기 (YYYY-MM-DD 형식)
+  const getCurrentDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   const handleImageChange = (newImages: ImageData[]) => {
     setImages(newImages);
@@ -59,6 +69,15 @@ const CreatePost = () => {
 
     if (!time) {
       newErrors.time = "마감 시간을 선택해주세요.";
+    }
+
+    if (date && time) {
+      const selectedDateTime = new Date(`${date}T${time}:00`);
+      const currentDateTime = new Date();
+
+      if (selectedDateTime <= currentDateTime) {
+        newErrors.datetime = "마감 날짜와 시간은 현재 시간보다 이후여야 합니다.";
+      }
     }
 
     if (!areaData) {
@@ -99,15 +118,15 @@ const CreatePost = () => {
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDate(e.target.value);
-    if (errors.date) {
-      setErrors((prev) => ({ ...prev, date: "" }));
+    if (errors.date || errors.datetime) {
+      setErrors((prev) => ({ ...prev, date: "", datetime: "" }));
     }
   };
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTime(e.target.value);
-    if (errors.time) {
-      setErrors((prev) => ({ ...prev, time: "" }));
+    if (errors.time || errors.datetime) {
+      setErrors((prev) => ({ ...prev, time: "", datetime: "" }));
     }
   };
 
@@ -177,33 +196,42 @@ const CreatePost = () => {
           </div>
 
           {/* 마감 날짜 및 시간 */}
-          <div className="create-post-form-row">
-            <div className="create-post-form-group create-post-form-half">
-              <Label className="create-post-label">마감 날짜 *</Label>
-              <Input
-                id="date"
-                type="date"
-                value={date}
-                onChange={handleDateChange}
-                className={`create-post-input ${errors.date ? "error" : ""}`}
-              />
-              {errors.date && (
-                <span className="create-post-error">{errors.date}</span>
-              )}
+          <div className="create-post-form-group">
+            <div className="create-post-form-row">
+              <div className="create-post-form-group create-post-form-half">
+                <Label className="create-post-label">마감 날짜 *</Label>
+                <Input
+                  id="date"
+                  type="date"
+                  value={date}
+                  onChange={handleDateChange}
+                  className={`create-post-input ${errors.date || errors.datetime ? "error" : ""}`}
+                  min={getCurrentDate()}
+                />
+                {errors.date && (
+                  <span className="create-post-error">{errors.date}</span>
+                )}
+              </div>
+              <div className="create-post-form-group create-post-form-half">
+                <Label className="create-post-label">마감 시간 *</Label>
+                <Input
+                  id="time"
+                  type="time"
+                  value={time}
+                  onChange={handleTimeChange}
+                  className={`create-post-input ${errors.time || errors.datetime ? "error" : ""}`}
+                />
+                {errors.time && (
+                  <span className="create-post-error">{errors.time}</span>
+                )}
+              </div>
             </div>
-            <div className="create-post-form-group create-post-form-half">
-              <Label className="create-post-label">마감 시간 *</Label>
-              <Input
-                id="time"
-                type="time"
-                value={time}
-                onChange={handleTimeChange}
-                className={`create-post-input ${errors.time ? "error" : ""}`}
-              />
-              {errors.time && (
-                <span className="create-post-error">{errors.time}</span>
-              )}
-            </div>
+            {/* 날짜/시간 조합 에러 메시지 */}
+            {errors.datetime && (
+              <span className="create-post-error" style={{ marginTop: "8px" }}>
+                {errors.datetime}
+              </span>
+            )}
           </div>
 
           {/* 활동영역 설정  */}
