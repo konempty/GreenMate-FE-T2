@@ -44,7 +44,10 @@ const ImageUpload = ({
       <div className="image-upload-info">선택된 파일 : {images.length}개</div>
       <div className="image-upload-container">
         {images.map((image, index) => (
-          <div key={`${image.file.name}-${image.file.lastModified}`} className="image-upload-preview-wrapper">
+          <div
+            key={`${image.file.name}-${image.file.lastModified}`}
+            className="image-upload-preview-wrapper"
+          >
             <img
               src={image.preview}
               alt={`미리보기 ${index + 1}`}

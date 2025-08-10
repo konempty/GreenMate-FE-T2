@@ -93,7 +93,8 @@ export const useMapDrawing = ({ onAreaChange }: UseMapDrawingProps) => {
 
   // 계산된 값들
   const hasAreaData = polygonPoints.length > 0 || circleData;
-  const canFinishPolygon = areaType === "polygon" && polygonPoints.length >= 3 && isDrawing;
+  const canFinishPolygon =
+    areaType === "polygon" && polygonPoints.length >= 3 && isDrawing;
 
   return {
     // 상태
@@ -103,11 +104,11 @@ export const useMapDrawing = ({ onAreaChange }: UseMapDrawingProps) => {
     isDrawing,
     mapType,
     mousePosition,
-    
+
     // 계산된 값
     hasAreaData,
     canFinishPolygon,
-    
+
     // 핸들러
     handleAreaTypeSelect,
     handleMapClick,
