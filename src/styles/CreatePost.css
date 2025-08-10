@@ -1,4 +1,5 @@
 :root {
+    /* 기본 텍스트 및 배경 색상 */
     --color-create-post-h1: #151515;
     --color-create-post-background: #FEFEFE;
     --color-create-post-text-gray: #909090;
@@ -7,10 +8,25 @@
     --color-create-post-shadow: rgba(0, 0, 0, 0.1);
     --color-create-post-border: #e5e5e5;
 
+    /* 버튼 색상 */
     --color-create-post-button-white: #f5f5f5;
     --color-create-post-button-white-hover: #e0e0e0;
     --color-create-post-button-black: #151515;
     --color-create-post-button-black-hover: #3a3a3a;
+
+    /* 상태별 색상 */
+    --color-create-post-success: #4caf50;
+    --color-create-post-success-light: #f1f8e9;
+    --color-create-post-danger: #f44336;
+    --color-create-post-danger-light: #ff5252;
+    --color-create-post-disabled: #ccc;
+    --color-create-post-disabled-bg: #f5f5f5;
+    --color-create-post-disabled-border: #e0e0e0;
+
+    /* 배경 색상 */
+    --color-create-post-background-white: #ffffff;
+    --color-create-post-background-gray: #e0e0e0;
+    --color-create-post-background-light: #f5f5f5;
 }
 
 .header {
@@ -134,7 +150,7 @@
   padding: 10px;
   border: 1px solid var(--color-create-post-border);
   border-radius: 4px;
-  background-color: white;
+  background-color: var(--color-create-post-background-white);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -145,9 +161,13 @@
 }
 
 .create-post-area-button.active {
-  border-color: var(--color-create-post-border);
-  background-color: var(--color-create-post-color-gray);
-  color: var(--color-create-post-text-black);
+  border-color: var(--color-create-post-success);
+  background-color: var(--color-create-post-success-light);
+  color: var(--color-create-post-success);
+}
+
+.create-post-area-button:hover:not(.active) {
+  background-color: var(--color-create-post-background-light);
 }
 
 .create-post-area-controls {
@@ -163,6 +183,22 @@
   border: 1px solid var(--color-create-post-border);
   cursor: pointer;
   transition: all 0.2s ease;
+  background-color: var(--color-create-post-success);
+  color: var(--color-create-post-text-white);
+  border-color: var(--color-create-post-success);
+}
+
+.create-post-area-clear-btn.active {
+  background-color: var(--color-create-post-danger);
+  color: var(--color-create-post-text-white);
+  border-color: var(--color-create-post-danger);
+}
+
+.create-post-area-clear-btn.disabled {
+  background-color: var(--color-create-post-disabled-bg);
+  color: var(--color-create-post-disabled);
+  border-color: var(--color-create-post-disabled-border);
+  cursor: not-allowed;
 }
 
 /* 지도 관련 스타일 */
@@ -185,7 +221,7 @@
 
 .create-post-map-toggle {
   padding: 6px 12px;
-  background-color: var(--color-create-post-color-white);
+  background-color: var(--color-create-post-background-white);
   border: none;
   cursor: pointer;
   font-size: 12px;
@@ -194,16 +230,18 @@
   transition: all 0.2s ease;
   border-radius: 0;
 }
+
 .create-post-map-toggle:last-child {
   border-right: none;
 }
+
 .create-post-map-toggle.active {
   color: var(--color-create-post-text-black);
   font-weight: 500;
 }
 
 .create-post-map-toggle:hover:not(.active) {
-  background-color: var(--color-create-post-color-white);
+  background-color: var(--color-create-post-background-light);
 }
 
 .interactive-map {
@@ -212,7 +250,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--color-create-post-color-gray);
+  background-color: var(--color-create-post-background-gray);
   color: var(--color-create-post-text-gray);
   overflow: hidden;
   user-select: none;
@@ -237,34 +275,15 @@
   pointer-events: none;
 }
 
-/* 영역 제어 버튼 활성/비활성 상태 */
-.create-post-area-clear-btn.active {
-  background-color: #f44336;
-  color: white;
-  border-color: #f44336;
+/* 에러 스타일 */
+.create-post-input.error,
+.create-post-textarea.error {
+  border-color: var(--color-create-post-danger);
 }
 
-.create-post-area-clear-btn.disabled {
-  background-color: #f5f5f5;
-  color: #ccc;
-  border-color: #e0e0e0;
-  cursor: not-allowed;
-}
-
-/* 다각형 완성 버튼 스타일 */
-.create-post-area-clear-btn {
-  background-color: #4caf50;
-  color: white;
-  border-color: #4caf50;
-}
-
-/* 영역 선택 버튼 활성 상태 */
-.create-post-area-button.active {
-  border-color: #4caf50;
-  background-color: #f1f8e9;
-  color: #4caf50;
-}
-
-.create-post-area-button:hover:not(.active) {
-  background-color: #f5f5f5;
+.create-post-error {
+  color: var(--color-create-post-danger-light);
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
 }
