@@ -9,6 +9,7 @@ interface InputProps {
   className?: string;
   accept?: string;
   multiple?: boolean;
+  maxLength?: number;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -20,6 +21,7 @@ const Input: React.FC<InputProps> = ({
   className,
   accept,
   multiple,
+  maxLength,
 }) => {
   return (
     <input
@@ -31,6 +33,7 @@ const Input: React.FC<InputProps> = ({
       className={className}
       accept={accept}
       multiple={multiple}
+      maxLength={maxLength}
     />
   );
 };

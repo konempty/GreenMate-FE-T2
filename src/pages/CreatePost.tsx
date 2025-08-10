@@ -124,7 +124,12 @@ const CreatePost = () => {
         <form className="create-post-form" onSubmit={handleSubmit}>
           {/* 제목 입력 */}
           <div className="create-post-form-group">
-            <Label className="create-post-label">제목 *</Label>
+            <Label className="create-post-label">
+              제목 *
+              <span className="create-post-char-count">
+                {title.length}/50
+              </span>
+            </Label>
             <Input
               id="title"
               type="text"
@@ -132,6 +137,7 @@ const CreatePost = () => {
               value={title}
               onChange={handleTitleChange}
               className={`create-post-input ${errors.title ? "error" : ""}`}
+              maxLength={50}
             />
             {errors.title && (
               <span className="create-post-error">{errors.title}</span>
@@ -140,14 +146,22 @@ const CreatePost = () => {
 
           {/* 내용 입력 */}
           <div className="create-post-form-group">
-            <Label className="create-post-label">내용 *</Label>
+            <Label className="create-post-label">
+              내용 *
+              <span className="create-post-char-count">
+                {description.length}/4000
+              </span>
+            </Label>
             <textarea
               id="description"
               placeholder="내용을 작성해주세요"
               value={description}
               onChange={handleDescriptionChange}
-              className={`create-post-textarea ${errors.description ? "error" : ""}`}
+              className={`create-post-textarea ${
+                errors.description ? "error" : ""
+              }`}
               rows={6}
+              maxLength={4000}
             />
             {errors.description && (
               <span className="create-post-error">{errors.description}</span>

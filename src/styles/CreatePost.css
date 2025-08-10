@@ -80,6 +80,9 @@
   font-weight: 500;
   color: var(--color-create-post-text-black);
   font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .create-post-input {
@@ -285,4 +288,11 @@
   font-size: 12px;
   margin-top: 4px;
   display: block;
+}
+
+.create-post-char-count {
+  font-size: 12px;
+  color: var(--color-create-post-text-gray);
+  font-weight: normal;
+  margin-left: 8px;
 }
