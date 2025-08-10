@@ -126,9 +126,7 @@ const CreatePost = () => {
           <div className="create-post-form-group">
             <Label className="create-post-label">
               제목 *
-              <span className="create-post-char-count">
-                {title.length}/50
-              </span>
+              <span className="create-post-char-count">{title.length}/50</span>
             </Label>
             <Input
               id="title"
