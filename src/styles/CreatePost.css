@@ -275,7 +275,6 @@
   pointer-events: none;
 }
 
-/* 에러 스타일 */
 .create-post-input.error,
 .create-post-textarea.error {
   border-color: var(--color-create-post-danger);

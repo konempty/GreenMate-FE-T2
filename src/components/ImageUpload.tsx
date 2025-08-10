@@ -3,18 +3,9 @@ import { X } from "lucide-react";
 import Button from "./Button";
 import Input from "./Input";
 import { Label } from "./label";
+import type { ImageData, ImageUploadProps } from "../types/imageUpload";
+
 import "../styles/ImageUpload.css";
-
-interface ImageData {
-  file: File;
-  preview: string;
-}
-
-interface ImageUploadProps {
-  maxImages?: number;
-  onChange: (images: ImageData[]) => void;
-  className?: string;
-}
 
 const ImageUpload = ({
   maxImages = 5,
@@ -29,7 +20,12 @@ const ImageUpload = ({
         file,
         preview: URL.createObjectURL(file),
       }));
-      const updatedImages = [...images, ...newImages].slice(0, maxImages);
+      const combinedImages = [...images, ...newImages];
+      const updatedImages = combinedImages.slice(0, maxImages);
+      const excessImages = combinedImages.slice(maxImages);
+
+      excessImages.forEach((image) => URL.revokeObjectURL(image.preview));
+
       setImages(updatedImages);
       onChange(updatedImages);
     }
@@ -48,7 +44,7 @@ const ImageUpload = ({
       <div className="image-upload-info">선택된 파일 : {images.length}개</div>
       <div className="image-upload-container">
         {images.map((image, index) => (
-          <div key={index} className="image-upload-preview-wrapper">
+          <div key={`${image.file.name}-${image.file.lastModified}`} className="image-upload-preview-wrapper">
             <img
               src={image.preview}
               alt={`미리보기 ${index + 1}`}

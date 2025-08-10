@@ -10,14 +10,9 @@ import { Label } from "../components/label";
 import ImageUpload from "../components/ImageUpload";
 import MapArea from "../components/MapArea";
 import type { AreaData } from "../types/mapArea";
+import type { ImageData } from "../types/imageUpload";
 
 import "../styles/CreatePost.css";
-
-interface ImageData {
-  file: File;
-  preview: string;
-}
-
 const CreatePost = () => {
   const navigate = useNavigate();
 
