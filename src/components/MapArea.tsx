@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Circle, Pentagon } from "lucide-react";
 import Button from "./Button";
 import { Label } from "./label";
-import { AreaData, PolygonPoint, CircleData } from "../types/mapArea";
+import type { AreaData, PolygonPoint, CircleData } from "../types/mapArea";
 
 import "../styles/MapArea.css";
 

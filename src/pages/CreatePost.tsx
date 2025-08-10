@@ -9,7 +9,7 @@ import Input from "../components/Input";
 import { Label } from "../components/label";
 import ImageUpload from "../components/ImageUpload";
 import MapArea from "../components/MapArea";
-import { AreaData } from "../types/mapArea";
+import type { AreaData } from "../types/mapArea";
 
 import "../styles/CreatePost.css";
 
@@ -20,7 +20,7 @@ interface ImageData {
 
 const CreatePost = () => {
   const navigate = useNavigate();
-  
+
   // Form states
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -29,7 +29,7 @@ const CreatePost = () => {
   const [time, setTime] = useState("");
   const [areaData, setAreaData] = useState<AreaData>(null);
 
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleImageChange = (newImages: ImageData[]) => {
     setImages(newImages);
@@ -38,7 +38,7 @@ const CreatePost = () => {
   const handleAreaChange = (newAreaData: AreaData) => {
     setAreaData(newAreaData);
     if (newAreaData) {
-      setErrors(prev => ({ ...prev, area: "" }));
+      setErrors((prev) => ({ ...prev, area: "" }));
     }
   };
 
@@ -48,7 +48,7 @@ const CreatePost = () => {
 
   // 폼 유효성 검사 함수
   const validateForm = () => {
-    const newErrors: {[key: string]: string} = {};
+    const newErrors: { [key: string]: string } = {};
 
     if (!title.trim()) {
       newErrors.title = "제목을 입력해주세요.";
@@ -76,7 +76,7 @@ const CreatePost = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -89,28 +89,30 @@ const CreatePost = () => {
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
     if (errors.title) {
-      setErrors(prev => ({ ...prev, title: "" }));
+      setErrors((prev) => ({ ...prev, title: "" }));
     }
   };
 
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleDescriptionChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+  ) => {
     setDescription(e.target.value);
     if (errors.description) {
-      setErrors(prev => ({ ...prev, description: "" }));
+      setErrors((prev) => ({ ...prev, description: "" }));
     }
   };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDate(e.target.value);
     if (errors.date) {
-      setErrors(prev => ({ ...prev, date: "" }));
+      setErrors((prev) => ({ ...prev, date: "" }));
     }
   };
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTime(e.target.value);
     if (errors.time) {
-      setErrors(prev => ({ ...prev, time: "" }));
+      setErrors((prev) => ({ ...prev, time: "" }));
     }
   };
 
@@ -120,10 +122,10 @@ const CreatePost = () => {
         <Header />
         <PageNavigation />
       </header>
-      
+
       <main className="create-post-main">
         <h1 className="create-post-title">팀 모집글 작성</h1>
-        
+
         <form className="create-post-form" onSubmit={handleSubmit}>
           {/* 제목 입력 */}
           <div className="create-post-form-group">
@@ -134,9 +136,11 @@ const CreatePost = () => {
               placeholder="제목을 작성해주세요"
               value={title}
               onChange={handleTitleChange}
-              className={`create-post-input ${errors.title ? 'error' : ''}`}
+              className={`create-post-input ${errors.title ? "error" : ""}`}
             />
-            {errors.title && <span className="create-post-error">{errors.title}</span>}
+            {errors.title && (
+              <span className="create-post-error">{errors.title}</span>
+            )}
           </div>
 
           {/* 내용 입력 */}
@@ -147,10 +151,12 @@ const CreatePost = () => {
               placeholder="내용을 작성해주세요"
               value={description}
               onChange={handleDescriptionChange}
-              className={`create-post-textarea ${errors.description ? 'error' : ''}`}
+              className={`create-post-textarea ${errors.description ? "error" : ""}`}
               rows={6}
             />
-            {errors.description && <span className="create-post-error">{errors.description}</span>}
+            {errors.description && (
+              <span className="create-post-error">{errors.description}</span>
+            )}
           </div>
 
           {/* 이미지 업로드 */}
@@ -172,9 +178,11 @@ const CreatePost = () => {
                 type="date"
                 value={date}
                 onChange={handleDateChange}
-                className={`create-post-input ${errors.date ? 'error' : ''}`}
+                className={`create-post-input ${errors.date ? "error" : ""}`}
               />
-              {errors.date && <span className="create-post-error">{errors.date}</span>}
+              {errors.date && (
+                <span className="create-post-error">{errors.date}</span>
+              )}
             </div>
             <div className="create-post-form-group create-post-form-half">
               <Label className="create-post-label">마감 시간 *</Label>
@@ -183,20 +191,28 @@ const CreatePost = () => {
                 type="time"
                 value={time}
                 onChange={handleTimeChange}
-                className={`create-post-input ${errors.time ? 'error' : ''}`}
+                className={`create-post-input ${errors.time ? "error" : ""}`}
               />
-              {errors.time && <span className="create-post-error">{errors.time}</span>}
+              {errors.time && (
+                <span className="create-post-error">{errors.time}</span>
+              )}
             </div>
           </div>
 
           {/* 활동영역 설정  */}
           <div className="create-post-form-group">
             <MapArea onAreaChange={handleAreaChange} />
-            {errors.area && <span className="create-post-error">{errors.area}</span>}
+            {errors.area && (
+              <span className="create-post-error">{errors.area}</span>
+            )}
           </div>
 
           <div className="create-post-buttons">
-            <Button type="button" className="create-post-cancel" onClick={handleCancel}>
+            <Button
+              type="button"
+              className="create-post-cancel"
+              onClick={handleCancel}
+            >
               취소
             </Button>
             <Button type="submit" className="create-post-submit">
@@ -205,7 +221,7 @@ const CreatePost = () => {
           </div>
         </form>
       </main>
-      
+
       <Footer />
     </div>
   );
