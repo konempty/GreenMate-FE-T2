@@ -23,16 +23,17 @@ const CreatePost = () => {
   const [images, setImages] = useState<ImageData[]>([]);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
+  const [activityDate, setActivityDate] = useState("");
+  const [maxParticipants, setMaxParticipants] = useState("");
   const [areaData, setAreaData] = useState<AreaData>(null);
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  // 현재 날짜 가져오기 (YYYY-MM-DD 형식)
   const getCurrentDate = () => {
     const today = new Date();
     const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
@@ -51,7 +52,6 @@ const CreatePost = () => {
     void navigate("/post");
   };
 
-  // 폼 유효성 검사 함수
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
@@ -71,12 +71,28 @@ const CreatePost = () => {
       newErrors.time = "마감 시간을 선택해주세요.";
     }
 
+    // 활동 일자 검증
+    if (!activityDate) {
+      newErrors.activityDate = "활동 일자를 선택해주세요.";
+    }
+
+    // 최대 모집 인원 검증
+    if (!maxParticipants.trim()) {
+      newErrors.maxParticipants = "최대 모집 인원을 입력해주세요.";
+    } else {
+      const participants = parseInt(maxParticipants);
+      if (isNaN(participants) || participants < 1) {
+        newErrors.maxParticipants = "최대 모집 인원은 1명 이상이어야 합니다.";
+      }
+    }
+
     if (date && time) {
       const selectedDateTime = new Date(`${date}T${time}:00`);
       const currentDateTime = new Date();
 
       if (selectedDateTime <= currentDateTime) {
-        newErrors.datetime = "마감 날짜와 시간은 현재 시간보다 이후여야 합니다.";
+        newErrors.datetime =
+          "마감 날짜와 시간은 현재 시간보다 이후여야 합니다.";
       }
     }
 
@@ -95,11 +111,19 @@ const CreatePost = () => {
       return;
     }
 
-    console.log({ title, description, images, date, time, areaData });
+    console.log({ 
+      title, 
+      description, 
+      images, 
+      date, 
+      time, 
+      activityDate,
+      maxParticipants: parseInt(maxParticipants),
+      areaData 
+    });
     void navigate("/post");
   };
 
-  // 입력 시 에러 제거
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
     if (errors.title) {
@@ -127,6 +151,24 @@ const CreatePost = () => {
     setTime(e.target.value);
     if (errors.time || errors.datetime) {
       setErrors((prev) => ({ ...prev, time: "", datetime: "" }));
+    }
+  };
+
+  const handleActivityDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setActivityDate(e.target.value);
+    if (errors.activityDate) {
+      setErrors((prev) => ({ ...prev, activityDate: "" }));
+    }
+  };
+
+  const handleMaxParticipantsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // 숫자만 입력 허용
+    if (value === "" || /^\d+$/.test(value)) {
+      setMaxParticipants(value);
+      if (errors.maxParticipants) {
+        setErrors((prev) => ({ ...prev, maxParticipants: "" }));
+      }
     }
   };
 
@@ -232,6 +274,40 @@ const CreatePost = () => {
                 {errors.datetime}
               </span>
             )}
+          </div>
+
+          {/* 활동 일자 및 최대 모집 인원 */}
+          <div className="create-post-form-group">
+            <div className="create-post-form-row">
+              <div className="create-post-form-group create-post-form-half">
+                <Label className="create-post-label">활동 일자 *</Label>
+                <Input
+                  id="activityDate"
+                  type="date"
+                  value={activityDate}
+                  onChange={handleActivityDateChange}
+                  className={`create-post-input ${errors.activityDate ? "error" : ""}`}
+                  min={getCurrentDate()}
+                />
+                {errors.activityDate && (
+                  <span className="create-post-error">{errors.activityDate}</span>
+                )}
+              </div>
+              <div className="create-post-form-group create-post-form-half">
+                <Label className="create-post-label">최대 모집 인원 *</Label>
+                <Input
+                  id="maxParticipants"
+                  type="text"
+                  placeholder="예: 10"
+                  value={maxParticipants}
+                  onChange={handleMaxParticipantsChange}
+                  className={`create-post-input ${errors.maxParticipants ? "error" : ""}`}
+                />
+                {errors.maxParticipants && (
+                  <span className="create-post-error">{errors.maxParticipants}</span>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* 활동영역 설정  */}
