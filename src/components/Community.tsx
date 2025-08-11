@@ -1,9 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import { PageNavigation } from "../components/PageNavigation";
 import "../styles/Community.css";
 import { listPosts, toggleLike } from "../services/community";
+
+const fmt = (iso: string) =>
+  new Date(iso).toLocaleString(undefined, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
 type PostListItem = {
   id: number;
@@ -87,7 +96,6 @@ function ImageCarousel({
           loading="lazy"
           draggable={false}
           onClick={(e) => {
-            // 스와이프 중이면 클릭 내비게이션 막기
             if (moved.current) return;
             e.stopPropagation();
             onImageClick?.();
@@ -154,30 +162,44 @@ export default function Community() {
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
 
+  const loadingRef = useRef(loading);
+  const hasNextRef = useRef(hasNext);
+  const bootedRef = useRef(booted);
+
+  useEffect(() => {
+    loadingRef.current = loading;
+  }, [loading]);
+  useEffect(() => {
+    hasNextRef.current = hasNext;
+  }, [hasNext]);
+  useEffect(() => {
+    bootedRef.current = booted;
+  }, [booted]);
+
   useEffect(() => {
     let cancelled = false;
+
     const run = async () => {
-      if (loading) return;
-      if (!hasNext && page !== 0) return;
+      if (loadingRef.current) return;
+      if (!hasNextRef.current && page !== 0) return;
+
       setLoading(true);
       try {
         const res = await listPosts({ page, size: PAGE_SIZE });
-        if (!cancelled) {
-          setItems((prev) =>
-            page === 0 ? res.items : [...prev, ...res.items],
-          );
-          setHasNext(res.hasNext);
-          if (!booted && page === 0) setBooted(true);
-        }
+        if (cancelled) return;
+
+        setItems((prev) => (page === 0 ? res.items : [...prev, ...res.items]));
+        setHasNext(res.hasNext);
+        if (!bootedRef.current && page === 0) setBooted(true);
       } finally {
         if (!cancelled) setLoading(false);
       }
     };
+
     void run();
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
   useEffect(() => {
@@ -185,28 +207,19 @@ export default function Community() {
     if (!hasNext || loading) return;
     const el = sentinelRef.current;
     if (!el) return;
+
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
-          if (e.isIntersecting) {
-            setPage((p) => p + 1);
-          }
+          if (e.isIntersecting) setPage((p) => p + 1);
         });
       },
       { rootMargin: "200px 0px" },
     );
+
     io.observe(el);
     return () => io.disconnect();
   }, [booted, hasNext, loading]);
-
-  const fmt = (iso: string) =>
-    new Date(iso).toLocaleString(undefined, {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
 
   const onToggleLike = async (postId: number) => {
     const { likeCount, liked } = await toggleLike(postId);
@@ -235,7 +248,9 @@ export default function Community() {
           <article
             key={p.id}
             className="post-card"
-            onClick={() => void navigate(`/community/${p.id}`)}
+            onClick={() => {
+              void navigate(`/community/${p.id}`);
+            }}
             role="button"
           >
             <div className="post-header">
@@ -257,7 +272,9 @@ export default function Community() {
               <ImageCarousel
                 images={p.images}
                 kind="card"
-                onImageClick={() => void navigate(`/community/${p.id}`)}
+                onImageClick={() => {
+                  void navigate(`/community/${p.id}`);
+                }}
               />
             ) : null}
 
@@ -267,6 +284,7 @@ export default function Community() {
               role="group"
             >
               <button
+                type="button"
                 className={`act-btn ${p.liked ? "liked" : ""}`}
                 onClick={() => {
                   void onToggleLike(p.id);
@@ -279,8 +297,11 @@ export default function Community() {
               </button>
               <div className="act-sep" />
               <button
+                type="button"
                 className="act-btn"
-                onClick={() => void navigate(`/community/${p.id}`)}
+                onClick={() => {
+                  void navigate(`/community/${p.id}`);
+                }}
               >
                 💬 <span className="count">{p.commentCount}</span>
               </button>

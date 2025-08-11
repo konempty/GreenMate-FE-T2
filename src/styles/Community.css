@@ -75,7 +75,7 @@
 .date { color: #6b7280; }
 
 
-.post-title { margin: 6px 0 4px; font-size: 18px; font-weight: 500; color: #000; }
+.post-title { margin: 6px 0 4px; font-size: 17px; font-weight: 400; color: #000; }
 .post-content { margin: 0 0 8px; white-space: pre-wrap; }
 
 /* 대표 이미지*/
@@ -165,7 +165,7 @@
 }
 
 .detail-title { margin: 6px 0 8px; font-size: 20px; font-weight: 700; }
-.detail-content { margin: 30px 0 20px; white-space: pre-wrap; }
+.detail-content { margin: 25px 0 20px; white-space: pre-wrap; }
 .detail-images {
   display: flex;
   flex-direction: column;
