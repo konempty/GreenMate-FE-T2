@@ -1,0 +1,298 @@
+:root {
+    /* 기본 텍스트 및 배경 색상 */
+    --color-create-post-h1: #151515;
+    --color-create-post-background: #FEFEFE;
+    --color-create-post-text-gray: #909090;
+    --color-create-post-text-black: #151515;
+    --color-create-post-text-white: #FFFFFF;
+    --color-create-post-shadow: rgba(0, 0, 0, 0.1);
+    --color-create-post-border: #e5e5e5;
+
+    /* 버튼 색상 */
+    --color-create-post-button-white: #f5f5f5;
+    --color-create-post-button-white-hover: #e0e0e0;
+    --color-create-post-button-black: #151515;
+    --color-create-post-button-black-hover: #3a3a3a;
+
+    /* 상태별 색상 */
+    --color-create-post-success: #4caf50;
+    --color-create-post-success-light: #f1f8e9;
+    --color-create-post-danger: #f44336;
+    --color-create-post-danger-light: #ff5252;
+    --color-create-post-disabled: #ccc;
+    --color-create-post-disabled-bg: #f5f5f5;
+    --color-create-post-disabled-border: #e0e0e0;
+
+    /* 배경 색상 */
+    --color-create-post-background-white: #ffffff;
+    --color-create-post-background-gray: #e0e0e0;
+    --color-create-post-background-light: #f5f5f5;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; 
+  padding: 0;
+  margin: 0;
+}
+
+.create-post-main {
+  max-width: 800px;
+  margin: 0 auto;
+  margin-top: 2rem;
+  background-color: var(--color-create-post-background);
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 4px var(--color-create-post-shadow);
+}
+
+.create-post-title {
+  font-size: 24px;
+  font-weight: 500;
+  margin-top: 0px;
+  margin-bottom: 24px;
+  color: var(--color-create-post-h1);
+}
+
+.create-post-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.create-post-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.create-post-form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.create-post-form-half {
+  flex: 1;
+}
+
+.create-post-label {
+  font-weight: 500;
+  color: var(--color-create-post-text-black);
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.create-post-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-create-post-border);
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.create-post-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-create-post-border);
+  border-radius: 4px;
+  font-size: 14px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.create-post-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.create-post-cancel {
+  background-color: var(--color-create-post-button-white);
+  color: var(--color-create-post-text-black);
+  border: 1px solid var(--color-create-post-border);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.create-post-cancel:hover {
+  background-color: var(--color-create-post-button-white-hover);
+}
+
+.create-post-submit {
+  background-color: var(--color-create-post-button-black);
+  color: var(--color-create-post-text-white);
+  border: 1px solid var(--color-create-post-border);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.create-post-submit:hover {
+  background-color: var(--color-create-post-button-black-hover);
+}
+
+.create-post-area-buttons {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.create-post-area-button {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid var(--color-create-post-border);
+  border-radius: 4px;
+  background-color: var(--color-create-post-background-white);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  color: var(--color-create-post-text-gray);
+  transition: all 0.2s ease;
+}
+
+.create-post-area-button.active {
+  border-color: var(--color-create-post-success);
+  background-color: var(--color-create-post-success-light);
+  color: var(--color-create-post-success);
+}
+
+.create-post-area-button:hover:not(.active) {
+  background-color: var(--color-create-post-background-light);
+}
+
+.create-post-area-controls {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.create-post-area-clear-btn {
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 4px;
+  border: 1px solid var(--color-create-post-border);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: var(--color-create-post-success);
+  color: var(--color-create-post-text-white);
+  border-color: var(--color-create-post-success);
+}
+
+.create-post-area-clear-btn.active {
+  background-color: var(--color-create-post-danger);
+  color: var(--color-create-post-text-white);
+  border-color: var(--color-create-post-danger);
+}
+
+.create-post-area-clear-btn.disabled {
+  background-color: var(--color-create-post-disabled-bg);
+  color: var(--color-create-post-disabled);
+  border-color: var(--color-create-post-disabled-border);
+  cursor: not-allowed;
+}
+
+/* 지도 관련 스타일 */
+.create-post-map-container {
+  border: 1px solid var(--color-create-post-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.create-post-map-toggle-overlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px var(--color-create-post-shadow);
+  z-index: 20;
+}
+
+.create-post-map-toggle {
+  padding: 6px 12px;
+  background-color: var(--color-create-post-background-white);
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--color-create-post-text-gray);
+  border-right: 1px solid var(--color-create-post-border);
+  transition: all 0.2s ease;
+  border-radius: 0;
+}
+
+.create-post-map-toggle:last-child {
+  border-right: none;
+}
+
+.create-post-map-toggle.active {
+  color: var(--color-create-post-text-black);
+  font-weight: 500;
+}
+
+.create-post-map-toggle:hover:not(.active) {
+  background-color: var(--color-create-post-background-light);
+}
+
+.interactive-map {
+  position: relative;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--color-create-post-background-gray);
+  color: var(--color-create-post-text-gray);
+  overflow: hidden;
+  user-select: none;
+}
+
+/* SVG 오버레이 스타일 */
+.map-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.map-overlay line {
+  pointer-events: none;
+}
+
+.map-overlay circle[stroke-dasharray] {
+  pointer-events: none;
+}
+
+.create-post-input.error,
+.create-post-textarea.error {
+  border-color: var(--color-create-post-danger);
+}
+
+.create-post-error {
+  color: var(--color-create-post-danger-light);
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
+.create-post-char-count {
+  font-size: 12px;
+  color: var(--color-create-post-text-gray);
+  font-weight: normal;
+  margin-left: 8px;
+}

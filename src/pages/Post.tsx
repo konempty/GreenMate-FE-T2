@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { PageNavigation } from "../components/PageNavigation";
 import Header from "../components/Header";
 import Input from "../components/Input";
@@ -62,6 +63,7 @@ const MOCK_POSTS: Post[] = [
 
 const Post = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const filteredPosts = useMemo(() => {
@@ -73,6 +75,10 @@ const Post = () => {
     );
   }, [debouncedSearchTerm]);
 
+  const handleCreatePost = () => {
+    void navigate("/post/create");
+  };
+
   return (
     <div className="post-container">
       <header className="header">
@@ -82,7 +88,9 @@ const Post = () => {
       <main className="post-main">
         <div className="post-header">
           <h1 className="post-title">팀 모집</h1>
-          <Button className="post-write-button">모집글 작성</Button>
+          <Button className="post-write-button" onClick={handleCreatePost}>
+            모집글 작성
+          </Button>
         </div>
         <div className="post-search-box">
           <Search size={20} className="post-search-icon" />
