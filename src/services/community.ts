@@ -31,6 +31,7 @@ export type CommentDto = {
   user: UserDto;
   content: string;
   createdAt: string;
+  imageUrl?: string;
 };
 
 // ---- Mock DB ----
@@ -52,9 +53,9 @@ const MOCK_POSTS: CommunityDetailDto[] = [
         "https://easy-peasy.ai/_next/image?url=https%3A%2F%2Fmedia.easy-peasy.ai%2Fea726477-e66b-4c73-bcbd-8efcdf91df1b%2F9c3e73e5-b967-40bb-8d30-01abe8470cb4.png&w=828&q=75",
     },
     images: [
-      { id: 1, imageUrl: "src/components/images/comm1.jpg" },
-      { id: 2, imageUrl: "src/components/images/comm2.jpg" },
-      { id: 3, imageUrl: "src/components/images/comm3.jpg" },
+      { id: 1, imageUrl: "/images/comm1.jpg" },
+      { id: 2, imageUrl: "/images/comm2.jpg" },
+      { id: 3, imageUrl: "/images/comm3.jpg" },
     ],
   },
   {
@@ -70,7 +71,7 @@ const MOCK_POSTS: CommunityDetailDto[] = [
       profileImageUrl:
         "https://s3.amazonaws.com/video-api-ai/system/tool/talking_head/66c44c6120398.png",
     },
-    images: [{ id: 4, imageUrl: "src/components/images/comm2.jpg" }],
+    images: [{ id: 4, imageUrl: "/images/comm2.jpg" }],
   },
 ];
 
@@ -157,7 +158,7 @@ export async function toggleLike(
 
 export async function createComment(
   communityId: number,
-  body: { content: string },
+  body: { content: string; imageUrl?: string },
 ): Promise<CommentDto> {
   await delay(200);
   const newCmt: CommentDto = {
@@ -165,6 +166,7 @@ export async function createComment(
     user: { id: 999, nickname: "me", profileImageUrl: "/avatar-me.png" },
     content: body.content,
     createdAt: new Date().toISOString(),
+    imageUrl: body.imageUrl, // ← 저장
   };
   const arr = MOCK_COMMENTS[communityId] ?? (MOCK_COMMENTS[communityId] = []);
   arr.unshift(newCmt);
