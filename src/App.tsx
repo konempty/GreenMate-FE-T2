@@ -8,7 +8,6 @@ import Community from "./components/Community";
 import CommunityDetail from "./components/CommunityDetail";
 import CreatePost from "./pages/CreatePost";
 
-
 function App() {
   return (
     <BrowserRouter>
@@ -17,7 +16,6 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/recycling-education" element={<Education />} />
-        <Route path="/community" element={<Community />} />
         <Route path="/community">
           <Route index element={<Community />} />
           <Route path=":id" element={<CommunityDetail />} />

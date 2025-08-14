@@ -111,6 +111,7 @@ function ImageCarousel({
                 e.stopPropagation();
                 goPrev();
               }}
+              onPointerDown={(e) => e.stopPropagation()}
               aria-label="이전 이미지"
             >
               ‹
@@ -122,6 +123,7 @@ function ImageCarousel({
                 e.stopPropagation();
                 goNext();
               }}
+              onPointerDown={(e) => e.stopPropagation()}
               aria-label="다음 이미지"
             >
               ›
