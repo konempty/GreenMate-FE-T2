@@ -79,6 +79,9 @@ const DetailPost = () => {
               ))}
             </div>
           )}
+          <div className="detail-post-description">
+            <p>{post.description}</p>
+          </div>
         </div>
       </main>
 
