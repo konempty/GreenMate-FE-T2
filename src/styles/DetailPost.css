@@ -4,6 +4,7 @@
     --color-detail-post-background: #ffffff;
     --color-detail-post-text-gray: #666;
     --color-detail-post-text-black: #151515;
+    --color-detail-post-text-white: #ffffff;
     --color-detail-post-text-meta: #333;
     --color-detail-post-shadow: rgba(0, 0, 0, 0.1);
     --color-detail-post-border: #e5e5e5;
@@ -132,6 +133,68 @@
 
 /* 활동 영역 섹션 */
 .detail-post-map-section {
-  padding: 1.5rem 0;
-  border-bottom: 1px solid var(--color-detail-post-border);
+  padding: 0.5rem 0;
+}
+
+/* 참가자 정보 및 참가 버튼 */
+.detail-post-participation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.detail-post-participants-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.detail-post-participants-count {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-detail-post-text-black);
+}
+
+.detail-post-participate-btn {
+  background: var(--color-detail-post-button-black);
+  color: var(--color-detail-post-text-white);
+  border: 1px solid var(--color-detail-post-button-black);
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 100px;
+}
+
+.detail-post-participate-btn:hover {
+  background: var(--color-detail-post-button-black-hover);
+}
+
+.detail-post-participate-btn.participating {
+  background: var(--color-detail-post-danger);
+  color: var(--color-detail-post-text-white);
+  border: 1px solid var(--color-detail-post-border);
+}
+
+.detail-post-participate-btn.participating:hover {
+  background: var(--color-detail-post-danger-light);
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .detail-post-participation {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .detail-post-participants-info {
+    justify-content: center;
+  }
+
+  .detail-post-participate-btn {
+    width: 100%;
+  }
 }

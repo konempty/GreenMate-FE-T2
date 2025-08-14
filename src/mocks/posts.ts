@@ -53,7 +53,7 @@ export const MOCK_POSTS: Post[] = [
     activityDate: "2025-08-20",
     images: ["/src/mocks/images/calendar.jpg", "/src/mocks/images/recycle.jpg"],
     maxParticipants: 20,
-    participants: 5,
+    participants: 19,
     areaData: {
       type: "circle",
       data: {
@@ -76,7 +76,7 @@ export const MOCK_POSTS: Post[] = [
     activityDate: "2025-08-25",
     images: [],
     maxParticipants: 5,
-    participants: 2,
+    participants: 5,
     areaData: {
       type: "polygon",
       points: [
