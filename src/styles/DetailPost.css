@@ -26,7 +26,7 @@
 
 .detail-post-main {
   flex: 1;
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 2rem 1rem;
 }
@@ -105,7 +105,7 @@
 }
 
 .detail-post-image {
-  width: 170px;
+  width: 160px;
   height: 150px;
   object-fit: cover;
   border-radius: 8px;
@@ -115,6 +115,23 @@
 
 /* 게시물 내용 */
 .detail-post-description {
+  color: var(--color-detail-post-text-meta);
+  font-size: 1rem;
+}
+
+/* 활동 영역 라벨 */
+.detail-post-location-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
   color: var(--color-detail-post-text-gray);
   font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* 활동 영역 섹션 */
+.detail-post-map-section {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--color-detail-post-border);
 }
