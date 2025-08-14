@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { Calendar } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { PageNavigation } from "../components/PageNavigation";
@@ -61,9 +62,23 @@ const DetailPost = () => {
           </div>
           <div className="detail-post-date-info">
             <span className="detail-post-date">
-              {post.date} {post.time}
+              <Calendar size={16} /> {post.date} {post.time}
             </span>
           </div>
+
+          {/* 이미지 섹션 추가 */}
+          {post.images && post.images.length > 0 && (
+            <div className="detail-post-images">
+              {post.images.map((image, index) => (
+                <img
+                  key={index}
+                  src={image}
+                  alt={`게시물 이미지 ${index + 1}`}
+                  className="detail-post-image"
+                />
+              ))}
+            </div>
+          )}
         </div>
       </main>
 
