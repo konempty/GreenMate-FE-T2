@@ -1,18 +1,16 @@
 import { Calendar, Users } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Button from "./Button";
 import { Label } from "./label";
-
-// Post 타입 정의
-interface Post {
-  id: number;
-  title: string;
-  description: string;
-  date: string;
-  time: string;
-  participants: number;
-}
+import type { Post } from "../mocks/posts";
 
 const PostItem = ({ post }: { post: Post }) => {
+  const navigate = useNavigate();
+
+  const handleDetailView = () => {
+    void navigate(`/post/${post.id}`);
+  };
+
   return (
     <div className="post-item">
       <div className="post-item-title">
@@ -28,7 +26,9 @@ const PostItem = ({ post }: { post: Post }) => {
         </p>
         <div className="post-item-bottom">
           <Label className="post-item-label">모집중</Label>
-          <Button className="post-item-button">상세보기</Button>
+          <Button className="post-item-button" onClick={handleDetailView}>
+            상세보기
+          </Button>
         </div>
       </div>
     </div>

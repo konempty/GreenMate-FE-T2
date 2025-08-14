@@ -2,6 +2,8 @@ import type { AreaData } from "../types/mapArea";
 
 export interface Post {
   id: number;
+  publisher_id: string;
+  publisher_image: string;
   title: string;
   description: string;
   date: string;
@@ -17,13 +19,15 @@ export interface Post {
 export const MOCK_POSTS: Post[] = [
   {
     id: 1,
+    publisher_id: "greenmate_user01",
+    publisher_image: "/src/mocks/images/profile.jpg",
     title: "제목1",
     description: "테스트",
     date: "2025-08-01",
     time: "12:23",
     endDate: "2025-08-10",
     activityDate: "2025-08-15",
-    images: ["/images/test1.jpg"],
+    images: ["/images/cacao.jpg"],
     maxParticipants: 10,
     participants: 3,
     areaData: {
@@ -38,6 +42,8 @@ export const MOCK_POSTS: Post[] = [
   },
   {
     id: 2,
+    publisher_id: "eco_warrior",
+    publisher_image: "/src/mocks/images/profile.jpg",
     title: "제목2",
     description:
       "테스트 내용이 얼마나 길어져도 되는지 확인하기 위한 테스트입니다.",
@@ -45,7 +51,7 @@ export const MOCK_POSTS: Post[] = [
     time: "14:00",
     endDate: "2025-08-12",
     activityDate: "2025-08-20",
-    images: ["/images/test2.jpg", "/images/test3.jpg"],
+    images: ["/images/calendar.jpg", "/images/recycle.jpg"],
     maxParticipants: 20,
     participants: 5,
     areaData: {
@@ -58,6 +64,8 @@ export const MOCK_POSTS: Post[] = [
   },
   {
     id: 3,
+    publisher_id: "nature_lover",
+    publisher_image: "/src/mocks/images/profile.jpg",
     title: "제목3",
     description:
       "얼마나 길어질 수 있는지 확인하기 위한 테스트입니다. " +
@@ -81,6 +89,8 @@ export const MOCK_POSTS: Post[] = [
   },
   {
     id: 4,
+    publisher_id: "clean_earth",
+    publisher_image: "/src/mocks/images/profile.jpg",
     title: "제목4",
     description:
       "더더욱 길어지는 내용입니다. 이 글은 테스트를 위해 작성된 것으로, " +
@@ -89,7 +99,7 @@ export const MOCK_POSTS: Post[] = [
     time: "18:00",
     endDate: "2025-08-20",
     activityDate: "2025-08-30",
-    images: ["/images/test4.jpg"],
+    images: ["/images/cigarette.jpg"],
     maxParticipants: 15,
     participants: 8,
     areaData: {
@@ -102,13 +112,20 @@ export const MOCK_POSTS: Post[] = [
   },
   {
     id: 5,
+    publisher_id: "green_volunteer",
+    publisher_image: "/src/mocks/images/profile.jpg",
     title: "제목도 길어지면 어떻게 될까? 궁금해서 작성해본 제목",
     description: "테스트",
     date: "2025-08-05",
     time: "20:30",
     endDate: "2025-08-25",
     activityDate: "2025-09-01",
-    images: [],
+    images: [
+      "/images/trash.jpg",
+      "/images/cacao.jpg",
+      "/images/calendar.jpg",
+      "/images/recycle.jpg",
+    ],
     maxParticipants: 30,
     participants: 0,
     areaData: {
