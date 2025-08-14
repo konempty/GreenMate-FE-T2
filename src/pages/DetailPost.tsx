@@ -165,7 +165,7 @@ const DetailPost = () => {
             <div className="detail-post-participants-info">
               <Users size={20} />
               <span className="detail-post-participants-count">
-                {post.maxParticipants}/{currentParticipants} 참가 중
+                참가 중 : {currentParticipants}/{post.maxParticipants}
                 {isMaxCapacityReached && (
                   <span className="capacity-status"> (모집완료)</span>
                 )}
