@@ -1,10 +1,11 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { Calendar, MapPin } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Calendar, MapPin, Users } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { PageNavigation } from "../components/PageNavigation";
 import Button from "../components/Button";
-import MapArea from "../components/MapArea"; // 추가
+import MapArea from "../components/MapArea";
 import { MOCK_POSTS } from "../mocks/posts";
 import type { Post } from "../mocks/posts";
 
@@ -13,8 +14,21 @@ import "../styles/DetailPost.css";
 const DetailPost = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [isParticipating, setIsParticipating] = useState(false);
+  
+  // 현재 사용자 ID (실제로는 인증 상태에서 가져와야 함)
+  const currentUserId = "greenmate_user01"; // 임시로 설정
 
   const post: Post | undefined = MOCK_POSTS.find((p) => p.id === Number(id));
+
+  useEffect(() => {
+    if (post) {
+      // 로컬 스토리지에서 참여 상태 불러오기
+      const participationKey = `participation_${currentUserId}_${post.id}`;
+      const savedParticipation = localStorage.getItem(participationKey);
+      setIsParticipating(savedParticipation === "true");
+    }
+  }, [post, currentUserId]);
 
   if (!post) {
     return (
@@ -38,6 +52,42 @@ const DetailPost = () => {
       </div>
     );
   }
+
+  const handleParticipateToggle = () => {
+    const newParticipationState = !isParticipating;
+    setIsParticipating(newParticipationState);
+    
+    // 로컬 스토리지에 참여 상태 저장
+    const participationKey = `participation_${currentUserId}_${post.id}`;
+    localStorage.setItem(participationKey, newParticipationState.toString());
+    
+    // 실제로는 API 호출로 참가/취소 처리
+  };
+
+  // 현재 참가자 수 계산 (토글 상태에 따라)
+  const currentParticipants = isParticipating 
+    ? post.participants + 1 
+    : post.participants;
+
+  // 참가 버튼 활성화 조건 체크
+  const isPostOwner = currentUserId === post.publisher_id;
+  const isMaxCapacityReached = currentParticipants >= post.maxParticipants;
+  const isParticipateDisabled = isMaxCapacityReached && !isParticipating;
+
+  // 버튼 텍스트 결정
+  const getButtonText = () => {
+    if (isMaxCapacityReached && !isParticipating) return "모집 완료";
+    return isParticipating ? "참가 취소" : "참가 하기";
+  };
+
+  // 버튼 클래스 결정
+  const getButtonClass = () => {
+    let baseClass = "detail-post-participate-btn";
+    if (isParticipateDisabled) baseClass += " disabled";
+    if (isParticipating) baseClass += " participating";
+    if (isMaxCapacityReached && !isParticipating) baseClass += " full";
+    return baseClass;
+  };
 
   return (
     <div className="detail-post-container">
@@ -92,6 +142,29 @@ const DetailPost = () => {
               <MapPin size={16} /> 활동 영역
             </span>
             <MapArea areaData={post.areaData} height={300} />
+          </div>
+
+          {/* 참가자 정보 및 참가 버튼 */}
+          <div className="detail-post-participation">
+            <div className="detail-post-participants-info">
+              <Users size={20} />
+              <span className="detail-post-participants-count">
+                {post.maxParticipants}/{currentParticipants} 참가 중
+                {isMaxCapacityReached && (
+                  <span className="capacity-status"> (모집완료)</span>
+                )}
+              </span>
+            </div>
+            {/* 게시자가 아닐 때만 참가 버튼 표시 */}
+            {!isPostOwner && (
+              <Button
+                onClick={handleParticipateToggle}
+                className={getButtonClass()}
+                disabled={isParticipateDisabled}
+              >
+                {getButtonText()}
+              </Button>
+            )}
           </div>
         </div>
       </main>
