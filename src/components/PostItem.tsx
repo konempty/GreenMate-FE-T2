@@ -8,6 +8,7 @@ interface Post {
   title: string;
   description: string;
   date: string;
+  time: string;
   participants: number;
 }
 
@@ -20,7 +21,7 @@ const PostItem = ({ post }: { post: Post }) => {
       <div className="post-item-content">
         <p className="post-item-description">{post.description}</p>
         <p className="post-item-meta">
-          <Calendar size={16} /> {post.date}
+          <Calendar size={16} /> {post.date} {post.time}
         </p>
         <p className="post-item-meta">
           <Users size={16} /> {post.participants}명 참여
