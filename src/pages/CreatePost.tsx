@@ -8,7 +8,7 @@ import Button from "../components/Button";
 import Input from "../components/Input";
 import { Label } from "../components/label";
 import ImageUpload from "../components/ImageUpload";
-import MapArea from "../components/MapArea";
+import CreateMapArea from "../components/CreateMapArea";
 import type { AreaData } from "../types/mapArea";
 import type { ImageData } from "../types/imageUpload";
 
@@ -318,7 +318,7 @@ const CreatePost = () => {
 
           {/* 활동영역 설정  */}
           <div className="create-post-form-group">
-            <MapArea onAreaChange={handleAreaChange} />
+            <CreateMapArea onAreaChange={handleAreaChange} />
             {errors.area && (
               <span className="create-post-error">{errors.area}</span>
             )}

@@ -1,9 +1,10 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { Calendar } from "lucide-react";
+import { Calendar, MapPin } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { PageNavigation } from "../components/PageNavigation";
 import Button from "../components/Button";
+import MapArea from "../components/MapArea"; // 추가
 import { MOCK_POSTS } from "../mocks/posts";
 import type { Post } from "../mocks/posts";
 
@@ -66,7 +67,7 @@ const DetailPost = () => {
             </span>
           </div>
 
-          {/* 이미지 섹션 추가 */}
+          {/* 이미지 섹션 */}
           {post.images && post.images.length > 0 && (
             <div className="detail-post-images">
               {post.images.map((image, index) => (
@@ -79,8 +80,18 @@ const DetailPost = () => {
               ))}
             </div>
           )}
+
+          {/* 게시물 내용 */}
           <div className="detail-post-description">
             <p>{post.description}</p>
+          </div>
+
+          {/* 활동 영역 */}
+          <div className="detail-post-map-section">
+            <span className="detail-post-location-label">
+              <MapPin size={16} /> 활동 영역
+            </span>
+            <MapArea areaData={post.areaData} height={300} />
           </div>
         </div>
       </main>
