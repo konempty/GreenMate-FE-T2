@@ -111,15 +111,15 @@ const CreatePost = () => {
       return;
     }
 
-    console.log({ 
-      title, 
-      description, 
-      images, 
-      date, 
-      time, 
+    console.log({
+      title,
+      description,
+      images,
+      date,
+      time,
       activityDate,
       maxParticipants: parseInt(maxParticipants),
-      areaData 
+      areaData,
     });
     void navigate("/post");
   };
@@ -161,7 +161,9 @@ const CreatePost = () => {
     }
   };
 
-  const handleMaxParticipantsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMaxParticipantsChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const value = e.target.value;
     // 숫자만 입력 허용
     if (value === "" || /^\d+$/.test(value)) {
@@ -290,7 +292,9 @@ const CreatePost = () => {
                   min={getCurrentDate()}
                 />
                 {errors.activityDate && (
-                  <span className="create-post-error">{errors.activityDate}</span>
+                  <span className="create-post-error">
+                    {errors.activityDate}
+                  </span>
                 )}
               </div>
               <div className="create-post-form-group create-post-form-half">
@@ -304,7 +308,9 @@ const CreatePost = () => {
                   className={`create-post-input ${errors.maxParticipants ? "error" : ""}`}
                 />
                 {errors.maxParticipants && (
-                  <span className="create-post-error">{errors.maxParticipants}</span>
+                  <span className="create-post-error">
+                    {errors.maxParticipants}
+                  </span>
                 )}
               </div>
             </div>

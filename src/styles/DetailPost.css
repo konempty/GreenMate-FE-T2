@@ -1,0 +1,113 @@
+:root {
+    /* 기본 텍스트 및 배경 색상 */
+    --color-detail-post-title: #151515;
+    --color-detail-post-background: #ffffff;
+    --color-detail-post-text-gray: #666;
+    --color-detail-post-text-black: #151515;
+    --color-detail-post-text-meta: #333;
+    --color-detail-post-shadow: rgba(0, 0, 0, 0.1);
+    --color-detail-post-border: #e5e5e5;
+
+    /* 버튼 색상 */
+    --color-detail-post-button-white: #f5f5f5;
+    --color-detail-post-button-white-hover: #e0e0e0;
+    --color-detail-post-button-black: #151515;
+    --color-detail-post-button-black-hover: #3a3a3a;
+
+    /* 상태별 색상 */
+    --color-detail-post-error: #666;
+    --color-detail-post-danger: #f44336;
+    --color-detail-post-danger-light: #ff5252;
+
+    /* 배경 색상 */
+    --color-detail-post-content-bg: #ffffff;
+    --color-detail-post-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.detail-post-main {
+  flex: 1;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.detail-post-content {
+  background: var(--color-detail-post-content-bg);
+  border-radius: 8px;
+  box-shadow: var(--color-detail-post-card-shadow);
+  padding: 2rem;
+}
+
+.detail-post-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 제목 */
+.detail-post-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-detail-post-title);
+  margin: 0 0 0.5rem 0;
+  line-height: 1.4;
+}
+
+/* 게시물 작성자 정보 */
+.detail-post-publisher-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.detail-post-publisher-image {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--color-detail-post-border);
+}
+
+.detail-post-publisher-id {
+  font-weight: 800;
+  color: var(--color-detail-post-text-meta);
+  font-size: 0.875rem;
+}
+
+.detail-post-date-info {
+  display: flex;
+  align-items: center;
+}
+
+.detail-post-date {
+  color: var(--color-detail-post-text-gray);
+  font-size: 0.875rem;
+}
+
+/* 에러 상태 */
+.detail-post-error {
+  text-align: center;
+  padding: 3rem;
+}
+
+.detail-post-error h1 {
+  color: var(--color-detail-post-error);
+  margin-bottom: 1.5rem;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .detail-post-main {
+    padding: 1rem 0.5rem;
+  }
+  
+  .detail-post-content {
+    padding: 1.5rem;
+  }
+  
+  .detail-post-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}
