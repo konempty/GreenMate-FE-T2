@@ -27,7 +27,7 @@ export const MOCK_POSTS: Post[] = [
     time: "12:23",
     endDate: "2025-08-10",
     activityDate: "2025-08-15",
-    images: ["/images/cacao.jpg"],
+    images: ["/src/mocks/images/cacao.jpg"],
     maxParticipants: 10,
     participants: 3,
     areaData: {
@@ -51,7 +51,7 @@ export const MOCK_POSTS: Post[] = [
     time: "14:00",
     endDate: "2025-08-12",
     activityDate: "2025-08-20",
-    images: ["/images/calendar.jpg", "/images/recycle.jpg"],
+    images: ["/src/mocks/images/calendar.jpg", "/src/mocks/images/recycle.jpg"],
     maxParticipants: 20,
     participants: 5,
     areaData: {
@@ -99,7 +99,7 @@ export const MOCK_POSTS: Post[] = [
     time: "18:00",
     endDate: "2025-08-20",
     activityDate: "2025-08-30",
-    images: ["/images/cigarette.jpg"],
+    images: ["/src/mocks/images/cigarette.jpg"],
     maxParticipants: 15,
     participants: 8,
     areaData: {
@@ -121,10 +121,10 @@ export const MOCK_POSTS: Post[] = [
     endDate: "2025-08-25",
     activityDate: "2025-09-01",
     images: [
-      "/images/trash.jpg",
-      "/images/cacao.jpg",
-      "/images/calendar.jpg",
-      "/images/recycle.jpg",
+      "/src/mocks/images/trash.jpg",
+      "/src/mocks/images/cacao.jpg",
+      "/src/mocks/images/calendar.jpg",
+      "/src/mocks/images/recycle.jpg",
     ],
     maxParticipants: 30,
     participants: 0,
