@@ -14,6 +14,7 @@
   --color-post-button-white: #f5f5f5;
   --color-post-button-white-hover: #e0e0e0;
   --color-post-label-black: #151515;
+  --color-post-label-green: #2E8D4F;
 
   --color-post-item-header: #EFFCF3;
   --color-post-item-content: #FEFEFE;
@@ -171,7 +172,6 @@
 }
 
 .post-item-label {
-  background-color: var(--color-post-label-black);
   color: var(--color-post-text-white);
   border: none;
   border-radius: 6px;
@@ -179,6 +179,15 @@
   font-size: 0.85rem;
   font-weight: 500;
   display: inline-block;
+}
+.post-item-label.recruiting {
+  background-color: var(--color-post-label-black);
+  color: var(--color-post-text-white);
+}
+
+.post-item-label.complete {
+  background-color: var(--color-post-label-green);
+  color: var(--color-post-text-white);
 }
 
 .post-item-button {
