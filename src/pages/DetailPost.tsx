@@ -154,7 +154,9 @@ const DetailPost = () => {
             <div className="detail-post-schedule-item">
               <CalendarDays size={16} />
               <span className="detail-post-schedule-label"> 활동 일자: </span>
-              <span className="detail-post-schedule-value">{post.activityDate}</span>
+              <span className="detail-post-schedule-value">
+                {post.activityDate}
+              </span>
             </div>
           </div>
 

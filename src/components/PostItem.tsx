@@ -11,6 +11,8 @@ const PostItem = ({ post }: { post: Post }) => {
     void navigate(`/post/${post.id}`);
   };
 
+  const isRecruitmentComplete = post.participants >= post.maxParticipants;
+
   return (
     <div className="post-item">
       <div className="post-item-title">
@@ -25,7 +27,9 @@ const PostItem = ({ post }: { post: Post }) => {
           <Users size={16} /> {post.participants}명 참여
         </p>
         <div className="post-item-bottom">
-          <Label className="post-item-label">모집중</Label>
+          <Label className={`post-item-label ${isRecruitmentComplete ? "complete" : "recruiting"}`}>
+            {isRecruitmentComplete ? "모집 완료" : "모집중"}
+          </Label>
           <Button className="post-item-button" onClick={handleDetailView}>
             상세보기
           </Button>
