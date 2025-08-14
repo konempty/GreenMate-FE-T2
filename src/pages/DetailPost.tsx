@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Calendar, MapPin, Users } from "lucide-react";
+import { Calendar, MapPin, Users, Clock, CalendarDays } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { PageNavigation } from "../components/PageNavigation";
@@ -15,7 +15,7 @@ const DetailPost = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [isParticipating, setIsParticipating] = useState(false);
-  
+
   // 현재 사용자 ID (실제로는 인증 상태에서 가져와야 함)
   const currentUserId = "greenmate_user01"; // 임시로 설정
 
@@ -56,17 +56,17 @@ const DetailPost = () => {
   const handleParticipateToggle = () => {
     const newParticipationState = !isParticipating;
     setIsParticipating(newParticipationState);
-    
+
     // 로컬 스토리지에 참여 상태 저장
     const participationKey = `participation_${currentUserId}_${post.id}`;
     localStorage.setItem(participationKey, newParticipationState.toString());
-    
+
     // 실제로는 API 호출로 참가/취소 처리
   };
 
   // 현재 참가자 수 계산 (토글 상태에 따라)
-  const currentParticipants = isParticipating 
-    ? post.participants + 1 
+  const currentParticipants = isParticipating
+    ? post.participants + 1
     : post.participants;
 
   // 참가 버튼 활성화 조건 체크
@@ -142,6 +142,20 @@ const DetailPost = () => {
               <MapPin size={16} /> 활동 영역
             </span>
             <MapArea areaData={post.areaData} height={300} />
+          </div>
+
+          {/* 마감 시간 및 활동 일자 */}
+          <div className="detail-post-schedule-info">
+            <div className="detail-post-schedule-item">
+              <Clock size={16} />
+              <span className="detail-post-schedule-label"> 마감 시간: </span>
+              <span className="detail-post-schedule-value">{post.endDate}</span>
+            </div>
+            <div className="detail-post-schedule-item">
+              <CalendarDays size={16} />
+              <span className="detail-post-schedule-label"> 활동 일자: </span>
+              <span className="detail-post-schedule-value">{post.activityDate}</span>
+            </div>
           </div>
 
           {/* 참가자 정보 및 참가 버튼 */}
