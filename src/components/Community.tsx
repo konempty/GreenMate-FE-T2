@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import { PageNavigation } from "../components/PageNavigation";
 import "../styles/Community.css";
-import { listPosts, toggleLike } from "../services/community";
+import { listPostsByCursor, toggleLike } from "../services/community";
 
 const fmt = (iso: string) =>
   new Date(iso).toLocaleString(undefined, {
@@ -156,8 +156,8 @@ const PAGE_SIZE = 6;
 
 export default function Community() {
   const [items, setItems] = useState<PostListItem[]>([]);
-  const [page, setPage] = useState(0);
-  const [hasNext, setHasNext] = useState(true);
+  const [lastId, setLastId] = useState<number | null>(null);
+  const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const [booted, setBooted] = useState(false);
 
@@ -165,55 +165,56 @@ export default function Community() {
   const navigate = useNavigate();
 
   const loadingRef = useRef(loading);
-  const hasNextRef = useRef(hasNext);
-  const bootedRef = useRef(booted);
-
+  const hasMoreRef = useRef(hasMore);
+  const lastIdRef = useRef(lastId);
   useEffect(() => {
     loadingRef.current = loading;
   }, [loading]);
   useEffect(() => {
-    hasNextRef.current = hasNext;
-  }, [hasNext]);
+    hasMoreRef.current = hasMore;
+  }, [hasMore]);
   useEffect(() => {
-    bootedRef.current = booted;
+    lastIdRef.current = lastId;
+  }, [lastId]);
+
+  const loadMore = useCallback(async () => {
+    if (loadingRef.current) return;
+    if (!hasMoreRef.current) return;
+
+    setLoading(true);
+    try {
+      const res = await listPostsByCursor({
+        lastId: lastIdRef.current ?? undefined,
+        limit: PAGE_SIZE,
+      });
+
+      setItems((prev) =>
+        lastIdRef.current == null ? res.items : [...prev, ...res.items],
+      );
+      setHasMore(res.hasNext);
+      setLastId(res.nextLastId);
+      if (!booted) setBooted(true);
+    } finally {
+      setLoading(false);
+    }
   }, [booted]);
 
   useEffect(() => {
-    let cancelled = false;
-
-    const run = async () => {
-      if (loadingRef.current) return;
-      if (!hasNextRef.current && page !== 0) return;
-
-      setLoading(true);
-      try {
-        const res = await listPosts({ page, size: PAGE_SIZE });
-        if (cancelled) return;
-
-        setItems((prev) => (page === 0 ? res.items : [...prev, ...res.items]));
-        setHasNext(res.hasNext);
-        if (!bootedRef.current && page === 0) setBooted(true);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-
-    void run();
-    return () => {
-      cancelled = true;
-    };
-  }, [page]);
+    void loadMore();
+  }, [loadMore]);
 
   useEffect(() => {
     if (!booted) return;
-    if (!hasNext || loading) return;
+    if (!hasMore || loading) return;
     const el = sentinelRef.current;
     if (!el) return;
 
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
-          if (e.isIntersecting) setPage((p) => p + 1);
+          if (e.isIntersecting) {
+            void loadMore();
+          }
         });
       },
       { rootMargin: "200px 0px" },
@@ -221,7 +222,7 @@ export default function Community() {
 
     io.observe(el);
     return () => io.disconnect();
-  }, [booted, hasNext, loading]);
+  }, [booted, hasMore, loading, loadMore]);
 
   const onToggleLike = async (postId: number) => {
     const { likeCount, liked } = await toggleLike(postId);
@@ -314,10 +315,12 @@ export default function Community() {
         <div ref={sentinelRef} style={{ height: 1 }} />
 
         {loading && booted && <div className="loading">로딩 중…</div>}
+
         {!loading && booted && items.length === 0 && (
           <div className="empty">아직 게시물이 없습니다.</div>
         )}
-        {!hasNext && booted && items.length > 0 && (
+
+        {!hasMore && booted && items.length > 0 && (
           <div className="end-tip">마지막 게시물입니다.</div>
         )}
       </main>

@@ -166,11 +166,50 @@ export async function createComment(
     user: { id: 999, nickname: "me", profileImageUrl: "/avatar-me.png" },
     content: body.content,
     createdAt: new Date().toISOString(),
-    imageUrl: body.imageUrl, // ← 저장
+    imageUrl: body.imageUrl,
   };
   const arr = MOCK_COMMENTS[communityId] ?? (MOCK_COMMENTS[communityId] = []);
   arr.unshift(newCmt);
   const post = MOCK_POSTS.find((p) => p.id === communityId);
   if (post) post.commentCount += 1;
   return newCmt;
+}
+
+// 커서 기반 목록 조회
+export async function listPostsByCursor(params: {
+  lastId?: number;
+  limit: number;
+}): Promise<{
+  items: CommunityListItemDto[];
+  hasNext: boolean;
+  nextLastId: number | null;
+}> {
+  await delay();
+
+  const sorted = [...MOCK_POSTS].sort((a, b) => b.id - a.id);
+
+  const startIdx =
+    params.lastId != null
+      ? sorted.findIndex((p) => p.id < (params.lastId ?? 0))
+      : 0;
+
+  const slice =
+    startIdx < 0 ? [] : sorted.slice(startIdx, startIdx + params.limit);
+
+  const items = slice.map((p) => {
+    const likeOverride = likeCountMap.get(p.id);
+    return {
+      ...p,
+      likeCount: likeOverride ?? p.likeCount,
+      liked: likedSet.has(p.id),
+      images: p.images,
+    };
+  });
+
+  const last = items[items.length - 1];
+  const nextLastId = last ? last.id : null;
+
+  const hasNext = startIdx >= 0 && startIdx + params.limit < sorted.length;
+
+  return { items, hasNext, nextLastId };
 }

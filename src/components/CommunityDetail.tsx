@@ -12,7 +12,6 @@ import {
   type CommentDto,
 } from "../services/community";
 
-/** 렌더마다 생성되지 않도록 모듈 최상단으로 이동 */
 const fmt = (iso: string) =>
   new Date(iso).toLocaleString(undefined, {
     year: "numeric",
@@ -32,7 +31,7 @@ export default function CommunityDetail() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false); // ⬅️ 중복 제출 방지
+  const [submitting, setSubmitting] = useState(false);
   const [likeLoading, setLikeLoading] = useState(false);
 
   useEffect(() => {
@@ -76,7 +75,7 @@ export default function CommunityDetail() {
   }, [previewUrl]);
 
   const onToggleLike = async () => {
-    if (!post || likeLoading) return; // 이미 요청 중이면 무시
+    if (!post || likeLoading) return;
     setLikeLoading(true);
     try {
       const { likeCount, liked } = await toggleLike(post.id);
@@ -96,7 +95,7 @@ export default function CommunityDetail() {
     const hasImage = !!previewUrl;
     if (!hasText && !hasImage) return;
 
-    if (submitting) return; // ⬅️ 연타 방지 가드
+    if (submitting) return;
     setSubmitting(true);
 
     try {
@@ -112,10 +111,9 @@ export default function CommunityDetail() {
         setPreviewUrl(null);
       }
     } catch (_e) {
-      // 필요하면 토스트 등으로 안내
       console.error(_e);
     } finally {
-      setSubmitting(false); // ⬅️ 버튼 다시 활성화
+      setSubmitting(false);
     }
   };
 
@@ -203,7 +201,6 @@ export default function CommunityDetail() {
           <section className="comments-section">
             <h3 className="cm-sec-title">댓글</h3>
 
-            {/* 댓글 목록 */}
             <ul className="comment-list">
               {comments.map((c) => (
                 <li key={c.id} className="comment-item">
@@ -232,7 +229,7 @@ export default function CommunityDetail() {
               )}
             </ul>
 
-            {/* 댓글 작성 폼 (전송 중 비활성화) */}
+            {/* 전송 중 비활성화*/}
             <form
               className="comment-form"
               onSubmit={(e) => void onSubmitComment(e)}
