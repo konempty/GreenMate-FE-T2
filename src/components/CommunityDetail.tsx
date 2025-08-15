@@ -12,6 +12,16 @@ import {
   type CommentDto,
 } from "../services/community";
 
+/** 렌더마다 생성되지 않도록 모듈 최상단으로 이동 */
+const fmt = (iso: string) =>
+  new Date(iso).toLocaleString(undefined, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
 export default function CommunityDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -22,15 +32,8 @@ export default function CommunityDetail() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-  const fmt = (iso: string) =>
-    new Date(iso).toLocaleString(undefined, {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  const [submitting, setSubmitting] = useState(false); // ⬅️ 중복 제출 방지
+  const [likeLoading, setLikeLoading] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -46,8 +49,7 @@ export default function CommunityDetail() {
         if (cancelled) return;
         setPost(detail);
         setComments(cmts);
-      } catch (e) {
-        console.error(e);
+      } catch {
         if (cancelled) return;
         setErrorMsg("게시글을 불러오지 못했습니다.");
       } finally {
@@ -60,7 +62,7 @@ export default function CommunityDetail() {
     };
   }, [id]);
 
-  // 댓글 이미지
+  // 댓글 이미지 (더미 업로드)
   const onPickImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const f = e.target.files[0];
@@ -74,25 +76,46 @@ export default function CommunityDetail() {
   }, [previewUrl]);
 
   const onToggleLike = async () => {
-    if (!post) return;
-    const { likeCount, liked } = await toggleLike(post.id);
-    setPost({ ...post, likeCount, liked });
+    if (!post || likeLoading) return; // 이미 요청 중이면 무시
+    setLikeLoading(true);
+    try {
+      const { likeCount, liked } = await toggleLike(post.id);
+      setPost({ ...post, likeCount, liked });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLikeLoading(false);
+    }
   };
 
   const onSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!post || (commentInput.trim().length === 0 && !previewUrl)) return;
+    if (!post) return;
 
-    const newCmt = await createComment(post.id, {
-      content: commentInput,
-      imageUrl: previewUrl ?? undefined,
-    });
+    const hasText = commentInput.trim().length > 0;
+    const hasImage = !!previewUrl;
+    if (!hasText && !hasImage) return;
 
-    setComments((prev) => [newCmt, ...prev]);
-    setCommentInput("");
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl);
-      setPreviewUrl(null);
+    if (submitting) return; // ⬅️ 연타 방지 가드
+    setSubmitting(true);
+
+    try {
+      const newCmt = await createComment(post.id, {
+        content: commentInput,
+        imageUrl: previewUrl ?? undefined,
+      });
+
+      setComments((prev) => [newCmt, ...prev]);
+      setCommentInput("");
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+        setPreviewUrl(null);
+      }
+    } catch (_e) {
+      // 필요하면 토스트 등으로 안내
+      console.error(_e);
+    } finally {
+      setSubmitting(false); // ⬅️ 버튼 다시 활성화
     }
   };
 
@@ -176,10 +199,11 @@ export default function CommunityDetail() {
             </span>
           </div>
 
-          {/* 댓글 섹션*/}
+          {/* 댓글 섹션 */}
           <section className="comments-section">
             <h3 className="cm-sec-title">댓글</h3>
 
+            {/* 댓글 목록 */}
             <ul className="comment-list">
               {comments.map((c) => (
                 <li key={c.id} className="comment-item">
@@ -208,12 +232,10 @@ export default function CommunityDetail() {
               )}
             </ul>
 
+            {/* 댓글 작성 폼 (전송 중 비활성화) */}
             <form
               className="comment-form"
-              onSubmit={(e) => {
-                e.preventDefault();
-                void onSubmitComment(e);
-              }}
+              onSubmit={(e) => void onSubmitComment(e)}
             >
               <div className="comment-form-row">
                 <textarea
@@ -221,6 +243,8 @@ export default function CommunityDetail() {
                   value={commentInput}
                   onChange={(e) => setCommentInput(e.target.value)}
                   maxLength={500}
+                  disabled={submitting}
+                  aria-disabled={submitting}
                 />
               </div>
 
@@ -237,12 +261,27 @@ export default function CommunityDetail() {
                   id="commentImage"
                   style={{ display: "none" }}
                   onChange={onPickImage}
+                  disabled={submitting}
                 />
-                <label htmlFor="commentImage" className="img-upload-btn">
+                <label
+                  htmlFor="commentImage"
+                  className="img-upload-btn"
+                  aria-disabled={submitting}
+                  style={
+                    submitting
+                      ? { opacity: 0.6, pointerEvents: "none" }
+                      : undefined
+                  }
+                >
                   📷
                 </label>
-                <button type="submit" className="cm-reply-btn wide">
-                  댓글 작성
+                <button
+                  type="submit"
+                  className="cm-reply-btn wide"
+                  disabled={submitting}
+                  aria-busy={submitting}
+                >
+                  {submitting ? "작성 중…" : "댓글 작성"}
                 </button>
               </div>
             </form>
