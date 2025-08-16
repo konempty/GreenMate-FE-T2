@@ -7,6 +7,7 @@ import Education from "./pages/Education";
 import Community from "./components/Community";
 import CommunityDetail from "./components/CommunityDetail";
 import CreatePost from "./pages/CreatePost";
+import CommunityNew from "./components/CommunityNew";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/community">
           <Route index element={<Community />} />
           <Route path=":id" element={<CommunityDetail />} />
+          <Route path="new" element={<CommunityNew />} />
         </Route>
         <Route path="/post/create" element={<CreatePost />} />
       </Routes>
