@@ -4,10 +4,10 @@ import Post from "./pages/Post";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Education from "./pages/Education";
-import Community from "./components/Community";
-import CommunityDetail from "./components/CommunityDetail";
+import Community from "./pages/Community";
+import CommunityDetail from "./pages/CommunityDetail";
 import CreatePost from "./pages/CreatePost";
-import CommunityNew from "./components/CommunityNew";
+import CommunityNew from "./pages/CommunityNew";
 
 function App() {
   return (
