@@ -20,7 +20,7 @@ function App() {
         <Route path="/community">
           <Route index element={<Community />} />
           <Route path=":id" element={<CommunityDetail />} />
-          <Route path="new" element={<CommunityNew />} />
+          <Route path="create" element={<CommunityNew />} />
         </Route>
         <Route path="/post/create" element={<CreatePost />} />
       </Routes>

@@ -240,7 +240,7 @@ export default function Community() {
 
       <main className="community-container">
         <div className="compose-wrap">
-          <Link to="/community/new" className="compose-btn">
+          <Link to="/community/create" className="compose-btn">
             새 게시물 작성
           </Link>
         </div>

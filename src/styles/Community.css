@@ -373,16 +373,31 @@
 @media (max-width: 640px) {
   .new-preview-grid { grid-template-columns: repeat(3, 1fr); }
 }
-.new-preview-item { position: relative; width: 100%; }
-.new-preview-item img {
-  display: block; width: 100%; height: 100px; object-fit: cover;
-  border: 1px solid #e5e7eb; border-radius: 8px;
+.new-preview-item {
+  position: relative;
+  width: 100%; height: 100px;
+  border-radius: 12px; overflow: hidden;
+  background: #fff;
+  box-shadow: 0 0 0 1px #e5e7eb inset;
 }
+
+.new-preview-item img {
+  display: block;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border: 0; border-radius: 0;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
 .new-remove-thumb {
-  position: absolute; top: -8px; right: -8px;
-  width: 24px; height: 24px; border-radius: 9999px;
-  border: none; background: #ef4444; color: #fff; font-weight: 700;
-  cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,.15);
+  position: absolute;
+  top: 6px; right: 6px; width: 24px; height: 24px;
+  border-radius: 9999px; border: none;
+  background: #ef4444; color: #fff;
+  font-weight: 700; line-height: 24px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,.15);
 }
 
 .new-actions {
@@ -396,3 +411,18 @@
 .new-btn.ghost { background: #fff; color: #111827; }
 .new-btn.primary { background: #111827; color: #fff; border-color: #111827; }
 .new-btn:disabled { opacity: .6; cursor: not-allowed; }
+
+.new-help {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+}
+.new-counter { font-size: 12px; color: #6b7280; }
+.new-error { font-size: 12px; color: #dc2626; }
+
+.new-input.is-error,
+.new-textarea.is-error {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 1px rgba(220, 38, 38, .1) inset;
+}
