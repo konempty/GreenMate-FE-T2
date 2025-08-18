@@ -6,6 +6,7 @@ import Footer from "../components/Footer";
 import { PageNavigation } from "../components/PageNavigation";
 import Button from "../components/Button";
 import MapArea from "../components/MapArea";
+import Comment from "../components/Comment";
 import { MOCK_POSTS } from "../mocks/posts";
 import type { Post } from "../mocks/posts";
 
@@ -182,9 +183,18 @@ const DetailPost = () => {
               </Button>
             )}
           </div>
+
+          {/* 댓글 섹션 */}
+          <Comment
+            postId={post.id}
+            currentUserId={currentUserId}
+            onCommentAdd={(comment) => {
+              // 필요시 댓글 추가 시 추가 작업 수행
+              console.log("새 댓글 추가됨:", comment);
+            }}
+          />
         </div>
       </main>
-
       <Footer />
     </div>
   );
