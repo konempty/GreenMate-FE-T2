@@ -29,12 +29,13 @@ const Comment: React.FC<CommentProps> = ({
   const [submitting, setSubmitting] = useState(false);
 
   // 댓글 저장
-  const saveCommentsToStorage = useCallback((newComments: Comment[]) => {
-    const commentsKey = `comments_${postId}`;
-    localStorage.setItem(commentsKey, JSON.stringify(newComments));
-  }, [
-    postId,
-  ]);
+  const saveCommentsToStorage = useCallback(
+    (newComments: Comment[]) => {
+      const commentsKey = `comments_${postId}`;
+      localStorage.setItem(commentsKey, JSON.stringify(newComments));
+    },
+    [postId],
+  );
 
   // 로컬 스토리지에서 댓글 불러오기
   useEffect(() => {
