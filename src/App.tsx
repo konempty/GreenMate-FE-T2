@@ -4,9 +4,10 @@ import Post from "./pages/Post";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Education from "./pages/Education";
-import Community from "./components/Community";
-import CommunityDetail from "./components/CommunityDetail";
+import Community from "./pages/Community";
+import CommunityDetail from "./pages/CommunityDetail";
 import CreatePost from "./pages/CreatePost";
+import CommunityNew from "./pages/CommunityNew";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/community">
           <Route index element={<Community />} />
           <Route path=":id" element={<CommunityDetail />} />
+          <Route path="create" element={<CommunityNew />} />
         </Route>
         <Route path="/post/create" element={<CreatePost />} />
       </Routes>
