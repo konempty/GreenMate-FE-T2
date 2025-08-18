@@ -21,8 +21,15 @@ const RecycleInfoModal = ({ item, onClose }: Props) => {
       if (e.key === "Escape") onClose();
     };
 
+    // 배경 스크롤 잠금
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
     document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = prev;
+    };
   }, [onClose]);
 
   return (
