@@ -1,5 +1,14 @@
 import type { AreaData } from "../types/mapArea";
 
+export interface Comment {
+  id: number;
+  content: string;
+  author: string;
+  authorImage: string;
+  createdAt: string;
+  imageUrl?: string;
+}
+
 export interface Post {
   id: number;
   publisher_id: string;
@@ -14,6 +23,7 @@ export interface Post {
   maxParticipants: number;
   participants: number;
   areaData: AreaData;
+  comments: Comment[]; // 댓글 추가
 }
 
 export const MOCK_POSTS: Post[] = [
@@ -39,6 +49,22 @@ export const MOCK_POSTS: Post[] = [
         { x: 497, y: 83.78125 },
       ],
     },
+    comments: [
+      {
+        id: 1,
+        content: "좋은 활동이네요! 참여하고 싶습니다.",
+        author: "eco_lover99",
+        authorImage: "/src/mocks/images/profile.jpg",
+        createdAt: "2025-08-01T15:30:00.000Z",
+      },
+      {
+        id: 2,
+        content: "시간이 맞으면 저도 함께 하겠습니다.",
+        author: "green_earth",
+        authorImage: "/src/mocks/images/profile.jpg",
+        createdAt: "2025-08-01T16:45:00.000Z",
+      },
+    ],
   },
   {
     id: 2,
@@ -61,6 +87,30 @@ export const MOCK_POSTS: Post[] = [
         radius: 180.88670487352022,
       },
     },
+    comments: [
+      {
+        id: 3,
+        content: "정말 의미있는 활동입니다!",
+        author: "nature_friend",
+        authorImage: "/src/mocks/images/profile.jpg",
+        createdAt: "2025-08-02T10:20:00.000Z",
+        imageUrl: "/src/mocks/images/recycle.jpg",
+      },
+      {
+        id: 4,
+        content: "저도 참여할게요 😊",
+        author: "clean_world",
+        authorImage: "/src/mocks/images/profile.jpg",
+        createdAt: "2025-08-02T11:15:00.000Z",
+      },
+      {
+        id: 5,
+        content: "환경을 위한 좋은 일이네요. 응원합니다!",
+        author: "earth_saver",
+        authorImage: "/src/mocks/images/profile.jpg",
+        createdAt: "2025-08-02T12:30:00.000Z",
+      },
+    ],
   },
   {
     id: 3,
@@ -86,6 +136,15 @@ export const MOCK_POSTS: Post[] = [
         { x: 150, y: 200 },
       ],
     },
+    comments: [
+      {
+        id: 6,
+        content: "벌써 모집이 완료되었군요. 다음에는 꼭 참여하고 싶습니다.",
+        author: "late_joiner",
+        authorImage: "/src/mocks/images/profile.jpg",
+        createdAt: "2025-08-03T18:45:00.000Z",
+      },
+    ],
   },
   {
     id: 4,
@@ -109,6 +168,22 @@ export const MOCK_POSTS: Post[] = [
         radius: 120.5,
       },
     },
+    comments: [
+      {
+        id: 7,
+        content: "활동 장소가 어디인가요?",
+        author: "curious_user",
+        authorImage: "/src/mocks/images/profile.jpg",
+        createdAt: "2025-08-04T19:30:00.000Z",
+      },
+      {
+        id: 8,
+        content: "저도 참여하고 싶습니다! 준비물이 따로 있나요?",
+        author: "eager_volunteer",
+        authorImage: "/src/mocks/images/profile.jpg",
+        createdAt: "2025-08-04T20:15:00.000Z",
+      },
+    ],
   },
   {
     id: 5,
@@ -138,5 +213,6 @@ export const MOCK_POSTS: Post[] = [
         { x: 50, y: 100 },
       ],
     },
+    comments: [], // 댓글이 없는 게시물
   },
 ];

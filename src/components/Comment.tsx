@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "../styles/Comment.css";
 
 interface Comment {
@@ -28,20 +28,28 @@ const Comment: React.FC<CommentProps> = ({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  // 댓글 저장
+  const saveCommentsToStorage = useCallback((newComments: Comment[]) => {
+    const commentsKey = `comments_${postId}`;
+    localStorage.setItem(commentsKey, JSON.stringify(newComments));
+  }, [
+    postId,
+  ]);
+
   // 로컬 스토리지에서 댓글 불러오기
   useEffect(() => {
     const commentsKey = `comments_${postId}`;
     const savedComments = localStorage.getItem(commentsKey);
-    if (savedComments) {
-      setComments(JSON.parse(savedComments) as Comment[]);
-    }
-  }, [postId]);
 
-  // 댓글 저장
-  const saveCommentsToStorage = (newComments: Comment[]) => {
-    const commentsKey = `comments_${postId}`;
-    localStorage.setItem(commentsKey, JSON.stringify(newComments));
-  };
+    if (savedComments) {
+      // 로컬 스토리지에 저장된 댓글이 있으면 사용
+      setComments(JSON.parse(savedComments) as Comment[]);
+    } else if (initialComments.length > 0) {
+      // 없으면 초기 댓글 사용하고 로컬 스토리지에 저장
+      setComments(initialComments);
+      saveCommentsToStorage(initialComments);
+    }
+  }, [postId, initialComments, saveCommentsToStorage]);
 
   // 이미지 업로드 처리
   const onPickImage = (e: React.ChangeEvent<HTMLInputElement>) => {
