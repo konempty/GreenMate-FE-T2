@@ -7,6 +7,7 @@ import Education from "./pages/Education";
 import Community from "./components/Community";
 import CommunityDetail from "./components/CommunityDetail";
 import CreatePost from "./pages/CreatePost";
+
 import DetailPost from "./pages/DetailPost";
 
 function App() {
