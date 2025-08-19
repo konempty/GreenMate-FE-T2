@@ -13,7 +13,6 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/post" element={<Post />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/recycling-education" element={<Education />} />
@@ -21,8 +20,11 @@ function App() {
           <Route index element={<Community />} />
           <Route path=":id" element={<CommunityDetail />} />
         </Route>
-        <Route path="/post/create" element={<CreatePost />} />
-        <Route path="/post/:id" element={<DetailPost />} />
+        <Route path="/post">
+          <Route index element={<Post />} />
+          <Route path="create" element={<CreatePost />} />
+          <Route path=":id" element={<DetailPost />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

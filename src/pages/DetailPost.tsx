@@ -16,6 +16,7 @@ const DetailPost = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [isParticipating, setIsParticipating] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); // 추가
 
   // 현재 사용자 ID (실제로는 인증 상태에서 가져와야 함)
   const currentUserId = "greenmate_user01"; // 임시로 설정
@@ -35,6 +36,33 @@ const DetailPost = () => {
       }
     }
   }, [post, currentUserId]);
+
+  const handleParticipateToggle = async () => {
+    // 이미 처리 중이면 무시
+    if (isSubmitting || !post) return;
+
+    setIsSubmitting(true);
+
+    try {
+      const newParticipationState = !isParticipating;
+
+      // 실제로는 여기서 API 호출
+
+      // API 호출 시뮬레이션 (실제로는 제거)
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      setIsParticipating(newParticipationState);
+
+      // 로컬 스토리지에 참여 상태 저장
+      const participationKey = `participation_${currentUserId}_${post.id}`;
+      localStorage.setItem(participationKey, newParticipationState.toString());
+    } catch (error) {
+      console.error("참가 상태 변경 실패:", error);
+      // 에러 발생 시 사용자에게 알림 (toast 등)
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (!post) {
     return (
@@ -59,21 +87,6 @@ const DetailPost = () => {
     );
   }
 
-  const handleParticipateToggle = () => {
-    const newParticipationState = !isParticipating;
-    setIsParticipating(newParticipationState);
-
-    try {
-      // 로컬 스토리지에 참여 상태 저장
-      const participationKey = `participation_${currentUserId}_${post.id}`;
-      localStorage.setItem(participationKey, newParticipationState.toString());
-    } catch (error) {
-      console.error(error);
-    }
-
-    // 실제로는 API 호출로 참가/취소 처리
-  };
-
   // 현재 참가자 수 계산 (토글 상태에 따라)
   const currentParticipants = isParticipating
     ? post.participants + 1
@@ -82,10 +95,16 @@ const DetailPost = () => {
   // 참가 버튼 활성화 조건 체크
   const isPostOwner = currentUserId === post.publisher_id;
   const isMaxCapacityReached = currentParticipants >= post.maxParticipants;
-  const isParticipateDisabled = isMaxCapacityReached && !isParticipating;
+  const isDeadlinePassed = new Date(post.endDate) < new Date();
+  const isParticipateDisabled =
+    (isMaxCapacityReached && !isParticipating) ||
+    isDeadlinePassed ||
+    isSubmitting; // 제출 중일 때도 비활성화
 
   // 버튼 텍스트 결정
   const getButtonText = () => {
+    if (isSubmitting) return isParticipating ? "취소 중..." : "참가 중...";
+    if (isDeadlinePassed) return "모집 마감";
     if (isMaxCapacityReached && !isParticipating) return "모집 완료";
     return isParticipating ? "참가 취소" : "참가 하기";
   };
@@ -94,8 +113,9 @@ const DetailPost = () => {
   const getButtonClass = () => {
     let baseClass = "detail-post-participate-btn";
     if (isParticipateDisabled) baseClass += " disabled";
-    if (isParticipating) baseClass += " participating";
+    if (isParticipating && !isSubmitting) baseClass += " participating";
     if (isMaxCapacityReached && !isParticipating) baseClass += " full";
+    if (isSubmitting) baseClass += " submitting"; // 로딩 상태 클래스 추가
     return baseClass;
   };
 
@@ -184,7 +204,7 @@ const DetailPost = () => {
             {/* 게시자가 아닐 때만 참가 버튼 표시 */}
             {!isPostOwner && (
               <Button
-                onClick={handleParticipateToggle}
+                onClick={() => void handleParticipateToggle()}
                 className={getButtonClass()}
                 disabled={isParticipateDisabled}
               >

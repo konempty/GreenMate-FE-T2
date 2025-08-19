@@ -11,7 +11,9 @@ const PostItem = ({ post }: { post: Post }) => {
     void navigate(`/post/${post.id}`);
   };
 
-  const isRecruitmentComplete = post.participants >= post.maxParticipants;
+  const isRecruitmentComplete =
+    post.participants >= post.maxParticipants ||
+    new Date(post.endDate) < new Date();
 
   return (
     <div className="post-item">
