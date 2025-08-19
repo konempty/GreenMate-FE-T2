@@ -1,0 +1,224 @@
+:root {
+    /* 기본 텍스트 및 배경 색상 */
+    --color-detail-post-title: #151515;
+    --color-detail-post-background: #ffffff;
+    --color-detail-post-text-gray: #666;
+    --color-detail-post-text-black: #151515;
+    --color-detail-post-text-white: #ffffff;
+    --color-detail-post-text-meta: #333;
+    --color-detail-post-shadow: rgba(0, 0, 0, 0.1);
+    --color-detail-post-border: #e5e5e5;
+
+    /* 버튼 색상 */
+    --color-detail-post-button-white: #f5f5f5;
+    --color-detail-post-button-white-hover: #e0e0e0;
+    --color-detail-post-button-black: #151515;
+    --color-detail-post-button-black-hover: #3a3a3a;
+
+    /* 상태별 색상 */
+    --color-detail-post-error: #666;
+    --color-detail-post-danger: #f44336;
+    --color-detail-post-danger-light: #ff5252;
+
+    /* 배경 색상 */
+    --color-detail-post-content-bg: #ffffff;
+    --color-detail-post-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.detail-post-main {
+  flex: 1;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.detail-post-content {
+  background: var(--color-detail-post-content-bg);
+  border-radius: 8px;
+  box-shadow: var(--color-detail-post-card-shadow);
+  padding: 2rem;
+}
+
+.detail-post-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 제목 */
+.detail-post-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-detail-post-title);
+  margin: 0 0 0.5rem 0;
+  line-height: 1.4;
+}
+
+/* 게시물 작성자 정보 */
+.detail-post-publisher-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.detail-post-publisher-image {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--color-detail-post-border);
+}
+
+.detail-post-publisher-id {
+  font-weight: 800;
+  color: var(--color-detail-post-text-meta);
+  font-size: 0.875rem;
+}
+
+/* 게시물 날짜 정보 */
+.detail-post-date-info {
+  display: flex;
+  align-items: center;
+}
+
+.detail-post-date {
+  color: var(--color-detail-post-text-gray);
+  font-size: 0.875rem;
+}
+
+/* 에러 상태 */
+.detail-post-error {
+  text-align: center;
+  padding: 3rem;
+}
+
+.detail-post-error h1 {
+  color: var(--color-detail-post-error);
+  margin-bottom: 1.5rem;
+}
+
+/* 이미지 섹션 */
+.detail-post-images {
+  padding: 1.0rem 0;
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto; /* 이미지가 많을 때 가로 스크롤 */
+}
+
+.detail-post-image {
+  width: 160px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--color-detail-post-border);
+  flex-shrink: 0; /* 이미지 크기 고정 */
+}
+
+/* 게시물 내용 */
+.detail-post-description {
+  color: var(--color-detail-post-text-meta);
+  font-size: 1rem;
+}
+
+/* 활동 영역 라벨 */
+.detail-post-location-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  color: var(--color-detail-post-text-gray);
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* 활동 영역 섹션 */
+.detail-post-map-section {
+  padding: 0.5rem 0;
+}
+
+/* 참가자 정보 및 참가 버튼 */
+.detail-post-participation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.detail-post-participants-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.detail-post-participants-count {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-detail-post-text-black);
+}
+
+.detail-post-participate-btn {
+  background: var(--color-detail-post-button-black);
+  color: var(--color-detail-post-text-white);
+  border: 1px solid var(--color-detail-post-button-black);
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 100px;
+}
+
+.detail-post-participate-btn:hover {
+  background: var(--color-detail-post-button-black-hover);
+}
+
+.detail-post-participate-btn.participating {
+  background: var(--color-detail-post-danger);
+  color: var(--color-detail-post-text-white);
+  border: 1px solid var(--color-detail-post-border);
+}
+
+.detail-post-participate-btn.participating:hover {
+  background: var(--color-detail-post-danger-light);
+}
+
+/* 제출 중 상태 */
+.detail-post-participate-btn.submitting {
+  opacity: 0.7;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.detail-post-participate-btn.submitting::after {
+  content: "";
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-left: 8px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .detail-post-participation {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .detail-post-participants-info {
+    justify-content: center;
+  }
+
+  .detail-post-participate-btn {
+    width: 100%;
+  }
+}
