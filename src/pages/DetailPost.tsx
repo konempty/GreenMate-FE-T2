@@ -24,10 +24,15 @@ const DetailPost = () => {
 
   useEffect(() => {
     if (post) {
-      // 로컬 스토리지에서 참여 상태 불러오기
-      const participationKey = `participation_${currentUserId}_${post.id}`;
-      const savedParticipation = localStorage.getItem(participationKey);
-      setIsParticipating(savedParticipation === "true");
+      try {
+        // 로컬 스토리지에서 참여 상태 불러오기
+        const participationKey = `participation_${currentUserId}_${post.id}`;
+        const savedParticipation = localStorage.getItem(participationKey);
+        setIsParticipating(savedParticipation === "true");
+      } catch (error) {
+        console.error(error);
+        setIsParticipating(false);
+      }
     }
   }, [post, currentUserId]);
 
@@ -58,9 +63,13 @@ const DetailPost = () => {
     const newParticipationState = !isParticipating;
     setIsParticipating(newParticipationState);
 
-    // 로컬 스토리지에 참여 상태 저장
-    const participationKey = `participation_${currentUserId}_${post.id}`;
-    localStorage.setItem(participationKey, newParticipationState.toString());
+    try {
+      // 로컬 스토리지에 참여 상태 저장
+      const participationKey = `participation_${currentUserId}_${post.id}`;
+      localStorage.setItem(participationKey, newParticipationState.toString());
+    } catch (error) {
+      console.error(error);
+    }
 
     // 실제로는 API 호출로 참가/취소 처리
   };
