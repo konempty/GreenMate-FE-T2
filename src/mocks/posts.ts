@@ -1,4 +1,4 @@
-import type { AreaData } from "../types/mapArea";
+import type { AreaData, LocationType } from "../types/mapArea";
 
 export interface Comment {
   id: number;
@@ -22,7 +22,8 @@ export interface Post {
   images: string[];
   maxParticipants: number;
   participants: number;
-  areaData: AreaData;
+  locationType: LocationType;
+  locationGeojson: AreaData;
   comments: Comment[];
 }
 
@@ -40,8 +41,8 @@ export const MOCK_POSTS: Post[] = [
     images: ["/src/mocks/images/cacao.jpg"],
     maxParticipants: 10,
     participants: 3,
-    areaData: {
-      type: "polygon",
+    locationType: "POLYGON",
+    locationGeojson: {
       points: [
         { lat: 37.5665, lng: 126.978 }, // 서울 시청 근처
         { lat: 37.567, lng: 126.9785 },
@@ -80,8 +81,8 @@ export const MOCK_POSTS: Post[] = [
     images: ["/src/mocks/images/calendar.jpg", "/src/mocks/images/recycle.jpg"],
     maxParticipants: 20,
     participants: 19,
-    areaData: {
-      type: "circle",
+    locationType: "CIRCLE",
+    locationGeojson: {
       data: {
         center: { lat: 37.5665, lng: 126.978 }, // 서울 시청
         radius: 500, // 500미터 반경
@@ -127,8 +128,8 @@ export const MOCK_POSTS: Post[] = [
     images: [],
     maxParticipants: 5,
     participants: 5,
-    areaData: {
-      type: "polygon",
+    locationType: "POLYGON",
+    locationGeojson: {
       points: [
         { lat: 37.564, lng: 126.975 }, // 명동 근처
         { lat: 37.565, lng: 126.976 },
@@ -161,8 +162,8 @@ export const MOCK_POSTS: Post[] = [
     images: ["/src/mocks/images/cigarette.jpg"],
     maxParticipants: 15,
     participants: 8,
-    areaData: {
-      type: "circle",
+    locationType: "CIRCLE",
+    locationGeojson: {
       data: {
         center: { lat: 37.5705, lng: 126.981 }, // 경복궁 근처
         radius: 300, // 300미터 반경
@@ -203,8 +204,8 @@ export const MOCK_POSTS: Post[] = [
     ],
     maxParticipants: 30,
     participants: 0,
-    areaData: {
-      type: "polygon",
+    locationType: "POLYGON",
+    locationGeojson: {
       points: [
         { lat: 37.569, lng: 126.985 }, // 인사동 근처
         { lat: 37.57, lng: 126.986 },
@@ -228,8 +229,8 @@ export const MOCK_POSTS: Post[] = [
     images: [],
     maxParticipants: 123,
     participants: 0,
-    areaData: {
-      type: "polygon",
+    locationType: "POLYGON",
+    locationGeojson: {
       points: [
         { lat: 37.564231334994055, lng: 126.99045650208022 },
         { lat: 37.563967697176665, lng: 126.98964647495772 },
@@ -252,8 +253,8 @@ export const MOCK_POSTS: Post[] = [
     images: [],
     maxParticipants: 10,
     participants: 0,
-    areaData: {
-      type: "circle",
+    locationType: "CIRCLE",
+    locationGeojson: {
       data: {
         center: {
           lat: 36.61029738127031,

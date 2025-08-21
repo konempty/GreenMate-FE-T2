@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Circle, Pentagon } from "lucide-react";
 import Button from "./Button";
 import { Label } from "./label";
-import type { AreaData } from "../types/mapArea";
+import type { AreaData, LocationType } from "../types/mapArea";
 import { useGoogleMapsLoader } from "../hooks/useGoogleMapsLoader";
 import GoogleMapsLoadingSpinner from "../utils/GoogleMapsLoadingSpinner";
 import GoogleMapsError from "../utils/GoogleMapsError";
@@ -10,7 +10,10 @@ import "../styles/CreateMapArea.css";
 
 interface MapAreaProps {
   className?: string;
-  onAreaChange?: (areaData: AreaData | null) => void;
+  onAreaChange?: (
+    areaData: AreaData | null,
+    locationType: LocationType | null,
+  ) => void;
 }
 
 const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
@@ -133,7 +136,6 @@ const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
 
       if (center) {
         const areaData: AreaData = {
-          type: "circle",
           data: {
             center: {
               lat: center.lat(),
@@ -144,7 +146,7 @@ const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
         };
 
         console.log("원 데이터:", areaData);
-        onAreaChange?.(areaData);
+        onAreaChange?.(areaData, "CIRCLE");
 
         // 편집 이벤트 리스너 추가
         google.maps.event.addListener(shape, "center_changed", () =>
@@ -167,12 +169,11 @@ const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
       }
 
       const areaData: AreaData = {
-        type: "polygon",
         points: points,
       };
 
       console.log("폴리곤 데이터:", areaData);
-      onAreaChange?.(areaData);
+      onAreaChange?.(areaData, "POLYGON");
 
       // 편집 이벤트 리스너 추가
       google.maps.event.addListener(path, "set_at", () =>
@@ -194,7 +195,6 @@ const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
 
     if (center) {
       const areaData: AreaData = {
-        type: "circle",
         data: {
           center: {
             lat: center.lat(),
@@ -205,7 +205,7 @@ const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
       };
 
       console.log("원 데이터 업데이트:", areaData);
-      onAreaChange?.(areaData);
+      onAreaChange?.(areaData, "CIRCLE");
     }
   };
 
@@ -223,12 +223,11 @@ const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
     }
 
     const areaData: AreaData = {
-      type: "polygon",
       points: points,
     };
 
     console.log("폴리곤 데이터 업데이트:", areaData);
-    onAreaChange?.(areaData);
+    onAreaChange?.(areaData, "POLYGON");
   };
 
   // 영역 타입 선택
@@ -267,7 +266,7 @@ const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
       drawingManagerRef.current.setDrawingMode(null);
     }
 
-    onAreaChange?.(null);
+    onAreaChange?.(null, null);
     console.log("영역 지우기 완료");
   };
 

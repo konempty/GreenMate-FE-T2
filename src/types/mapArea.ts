@@ -1,6 +1,6 @@
 export interface Point {
-  lat: number; // x -> lat로 변경
-  lng: number; // y -> lng로 변경
+  lat: number;
+  lng: number;
 }
 
 export interface CircleData {
@@ -8,8 +8,10 @@ export interface CircleData {
   radius: number; // 미터 단위
 }
 
+// 새로운 AreaData 구조
 export interface AreaData {
-  type: "circle" | "polygon";
   data?: CircleData;
   points?: Point[];
 }
+
+export type LocationType = "CIRCLE" | "POLYGON";

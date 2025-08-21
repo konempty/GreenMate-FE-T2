@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import type { AreaData } from "../types/mapArea";
+import type { AreaData, LocationType } from "../types/mapArea";
 import { useGoogleMapsLoader } from "../hooks/useGoogleMapsLoader";
 import GoogleMapsLoadingSpinner from "../utils/GoogleMapsLoadingSpinner";
 import GoogleMapsError from "../utils/GoogleMapsError";
@@ -7,41 +7,47 @@ import "../styles/MapArea.css";
 
 interface MapAreaProps {
   areaData: AreaData;
+  locationType: LocationType;
   height?: number;
 }
 
-const MapArea: React.FC<MapAreaProps> = ({ areaData, height = 300 }) => {
+const MapArea: React.FC<MapAreaProps> = ({
+  areaData,
+  locationType,
+  height = 300,
+}) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
   const { isLoaded, isLoading, error, loadProgress } = useGoogleMapsLoader();
 
   // 도형의 중심점과 적절한 줌 레벨 계산
-  const calculateMapConfig = (areaData: AreaData) => {
-    if (areaData.type === "circle" && areaData.data) {
+  const calculateMapConfig = (
+    areaData: AreaData,
+    locationType: LocationType,
+  ) => {
+    if (locationType === "CIRCLE" && areaData.data) {
       const center = areaData.data.center;
       const radius = areaData.data.radius;
 
-      // 수정된 원형 영역 줌 계산
+      // 원형 영역 줌 계산
       const radiusThresholds = [500, 400, 350, 300, 250, 200, 150, 100, 50, 0];
       const radiusZooms = [15, 15, 16, 16, 16, 16, 16, 17, 18, 19];
 
-      // findIndex가 -1을 반환하는 경우 처리
       const zoomIndex = radiusThresholds.findIndex(
         (threshold) => radius >= threshold,
       );
-      const zoom = zoomIndex !== -1 ? radiusZooms[zoomIndex] : 19; // 기본값 19
+      const zoom = zoomIndex !== -1 ? radiusZooms[zoomIndex] : 19;
 
       console.log("원형 영역 줌 계산:", {
         center,
         radius,
         zoomIndex,
         zoom,
-        radiusThresholds,
-        radiusZooms,
+        locationType,
       });
       return { center, zoom };
     } else if (
-      areaData.type === "polygon" &&
+      locationType === "POLYGON" &&
       areaData.points &&
       areaData.points.length > 0
     ) {
@@ -57,7 +63,7 @@ const MapArea: React.FC<MapAreaProps> = ({ areaData, height = 300 }) => {
         Math.max(...lngs) - Math.min(...lngs),
       );
 
-      // 폴리곤 영역 줌 계산
+      // 폴리곤 영역 줌 계산 (0.002 = 줌 18 기준)
       const spanThresholds = [
         0.01, 0.005, 0.003, 0.002, 0.001, 0.0005, 0.0002, 0.0001, 0,
       ];
@@ -66,15 +72,14 @@ const MapArea: React.FC<MapAreaProps> = ({ areaData, height = 300 }) => {
       const zoomIndex = spanThresholds.findIndex(
         (threshold) => maxSpan >= threshold,
       );
-      const zoom = zoomIndex !== -1 ? spanZooms[zoomIndex] : 20; // 기본값 20
+      const zoom = zoomIndex !== -1 ? spanZooms[zoomIndex] : 23;
 
       console.log("폴리곤 영역 줌 계산:", {
         center,
         maxSpan,
         zoomIndex,
         zoom,
-        spanThresholds,
-        spanZooms,
+        locationType,
       });
       return { center, zoom };
     }
@@ -88,9 +93,9 @@ const MapArea: React.FC<MapAreaProps> = ({ areaData, height = 300 }) => {
     if (!isLoaded || !mapRef.current) return;
 
     try {
-      console.log("지도 초기화 시작...");
+      console.log("지도 초기화 시작...", { locationType, areaData });
 
-      const mapConfig = calculateMapConfig(areaData);
+      const mapConfig = calculateMapConfig(areaData, locationType);
       console.log("계산된 지도 설정:", mapConfig);
 
       const map = new google.maps.Map(mapRef.current, {
@@ -117,10 +122,9 @@ const MapArea: React.FC<MapAreaProps> = ({ areaData, height = 300 }) => {
       });
 
       // 도형 그리기
-      if (areaData.type === "circle" && areaData.data) {
+      if (locationType === "CIRCLE" && areaData.data) {
         console.log("원 그리기 시작:", areaData.data);
 
-        // 원 그리기
         new google.maps.Circle({
           strokeColor: "#4a90e2",
           strokeOpacity: 0.8,
@@ -132,28 +136,8 @@ const MapArea: React.FC<MapAreaProps> = ({ areaData, height = 300 }) => {
           radius: areaData.data.radius,
         });
 
-        // 원의 경계에 맞게 지도 조정하지만 초기 줌 레벨 유지
         setTimeout(() => {
-          const bounds = new google.maps.LatLngBounds();
-          const center = areaData.data.center;
-          const radius = areaData.data.radius;
-
-          // 원의 대략적인 경계 계산
-          const latOffset = radius / 111320;
-          const lngOffset =
-            radius / (111320 * Math.cos((center.lat * Math.PI) / 180));
-
-          bounds.extend({
-            lat: center.lat + latOffset,
-            lng: center.lng + lngOffset,
-          });
-          bounds.extend({
-            lat: center.lat - latOffset,
-            lng: center.lng - lngOffset,
-          });
-
-          // fitBounds 대신 center만 조정하고 줌은 유지
-          map.setCenter(center);
+          map.setCenter(areaData.data.center);
 
           console.log("원 그리기 완료, 줌 유지:", {
             center: areaData.data.center,
@@ -161,10 +145,9 @@ const MapArea: React.FC<MapAreaProps> = ({ areaData, height = 300 }) => {
             currentZoom: map.getZoom(),
           });
         }, 100);
-      } else if (areaData.type === "polygon" && areaData.points) {
+      } else if (locationType === "POLYGON" && areaData.points) {
         console.log("폴리곤 그리기 시작:", areaData.points);
 
-        // 폴리곤 그리기
         new google.maps.Polygon({
           paths: areaData.points,
           strokeColor: "#4a90e2",
@@ -175,7 +158,6 @@ const MapArea: React.FC<MapAreaProps> = ({ areaData, height = 300 }) => {
           map: map,
         });
 
-        // 폴리곤의 중심으로 이동하지만 줌은 유지
         setTimeout(() => {
           const lats = areaData.points.map((p) => p.lat);
           const lngs = areaData.points.map((p) => p.lng);
@@ -194,7 +176,7 @@ const MapArea: React.FC<MapAreaProps> = ({ areaData, height = 300 }) => {
         }, 100);
       }
 
-      // 지도 클릭 이벤트 (좌표 확인용)
+      // 지도 클릭 이벤트
       map.addListener("click", (event: google.maps.MapMouseEvent) => {
         if (event.latLng) {
           const lat = event.latLng.lat();
@@ -205,7 +187,7 @@ const MapArea: React.FC<MapAreaProps> = ({ areaData, height = 300 }) => {
     } catch (err) {
       console.error("지도 초기화 오류:", err);
     }
-  }, [isLoaded, areaData]);
+  }, [isLoaded, areaData, locationType]);
 
   // 로딩 상태 처리
   if (isLoading) {
