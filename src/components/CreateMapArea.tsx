@@ -108,7 +108,7 @@ const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
     } catch (err) {
       console.error("CreateMapArea 지도 초기화 오류:", err);
     }
-  }, [isLoaded, mapType]);
+  }, [isLoaded]);
 
   // 도형 완성 처리
   const handleShapeComplete = (

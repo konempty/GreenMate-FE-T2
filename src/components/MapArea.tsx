@@ -20,74 +20,6 @@ const MapArea: React.FC<MapAreaProps> = ({
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
   const { isLoaded, isLoading, error, loadProgress } = useGoogleMapsLoader();
 
-  // 도형의 중심점과 적절한 줌 레벨 계산
-  const calculateMapConfig = (
-    areaData: AreaData,
-    locationType: LocationType,
-  ) => {
-    if (locationType === "CIRCLE" && areaData.data) {
-      const center = areaData.data.center;
-      const radius = areaData.data.radius;
-
-      // 원형 영역 줌 계산
-      const radiusThresholds = [500, 400, 350, 300, 250, 200, 150, 100, 50, 0];
-      const radiusZooms = [15, 15, 16, 16, 16, 16, 16, 17, 18, 19];
-
-      const zoomIndex = radiusThresholds.findIndex(
-        (threshold) => radius >= threshold,
-      );
-      const zoom = zoomIndex !== -1 ? radiusZooms[zoomIndex] : 19;
-
-      console.log("원형 영역 줌 계산:", {
-        center,
-        radius,
-        zoomIndex,
-        zoom,
-        locationType,
-      });
-      return { center, zoom };
-    } else if (
-      locationType === "POLYGON" &&
-      areaData.points &&
-      areaData.points.length > 0
-    ) {
-      const lats = areaData.points.map((p) => p.lat);
-      const lngs = areaData.points.map((p) => p.lng);
-      const center = {
-        lat: lats.reduce((sum, lat) => sum + lat, 0) / lats.length,
-        lng: lngs.reduce((sum, lng) => sum + lng, 0) / lngs.length,
-      };
-
-      const maxSpan = Math.max(
-        Math.max(...lats) - Math.min(...lats),
-        Math.max(...lngs) - Math.min(...lngs),
-      );
-
-      // 폴리곤 영역 줌 계산 (0.002 = 줌 18 기준)
-      const spanThresholds = [
-        0.01, 0.005, 0.003, 0.002, 0.001, 0.0005, 0.0002, 0.0001, 0,
-      ];
-      const spanZooms = [14, 15, 16, 18, 19, 20, 21, 22, 23];
-
-      const zoomIndex = spanThresholds.findIndex(
-        (threshold) => maxSpan >= threshold,
-      );
-      const zoom = zoomIndex !== -1 ? spanZooms[zoomIndex] : 23;
-
-      console.log("폴리곤 영역 줌 계산:", {
-        center,
-        maxSpan,
-        zoomIndex,
-        zoom,
-        locationType,
-      });
-      return { center, zoom };
-    }
-
-    console.log("기본 설정 사용");
-    return { center: { lat: 37.5665, lng: 126.978 }, zoom: 15 };
-  };
-
   // 지도 초기화 및 도형 그리기
   useEffect(() => {
     if (!isLoaded || !mapRef.current) return;
@@ -95,12 +27,10 @@ const MapArea: React.FC<MapAreaProps> = ({
     try {
       console.log("지도 초기화 시작...", { locationType, areaData });
 
-      const mapConfig = calculateMapConfig(areaData, locationType);
-      console.log("계산된 지도 설정:", mapConfig);
-
+      // 기본 지도 생성 (초기 center와 zoom은 임시값)
       const map = new google.maps.Map(mapRef.current, {
-        zoom: mapConfig.zoom,
-        center: mapConfig.center,
+        zoom: 15, // 임시 줌 레벨
+        center: { lat: 37.5665, lng: 126.978 }, // 임시 중심점 (서울 시청)
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         disableDefaultUI: false,
         zoomControl: true,
@@ -114,14 +44,9 @@ const MapArea: React.FC<MapAreaProps> = ({
       });
 
       mapInstanceRef.current = map;
-      console.log("지도 생성 완료, 현재 줌:", map.getZoom());
+      console.log("지도 생성 완료");
 
-      // 지도 로드 완료 후 줌 확인
-      google.maps.event.addListenerOnce(map, "idle", () => {
-        console.log("지도 로드 완료, 최종 줌:", map.getZoom());
-      });
-
-      // 도형 그리기
+      // 도형 그리기 및 자동 뷰포트 설정
       if (locationType === "CIRCLE" && areaData.data) {
         console.log("원 그리기 시작:", areaData.data);
 
@@ -136,16 +61,26 @@ const MapArea: React.FC<MapAreaProps> = ({
           radius: areaData.data.radius,
         });
 
-        setTimeout(() => {
-          map.setCenter(areaData.data.center);
+        // 원의 경계 계산
+        const bounds = new google.maps.LatLngBounds();
+        const center = areaData.data.center;
+        const radius = areaData.data.radius;
 
-          console.log("원 그리기 완료, 줌 유지:", {
-            center: areaData.data.center,
-            radius: areaData.data.radius,
-            currentZoom: map.getZoom(),
-          });
-        }, 100);
-      } else if (locationType === "POLYGON" && areaData.points) {
+        const latOffset = radius / 111320;
+        const lngOffset = radius / (111320 * Math.cos((center.lat * Math.PI) / 180));
+
+        bounds.extend({
+          lat: center.lat + latOffset,
+          lng: center.lng + lngOffset,
+        });
+        bounds.extend({
+          lat: center.lat - latOffset,
+          lng: center.lng - lngOffset,
+        });
+
+        map.fitBounds(bounds);
+
+      } else if (locationType === "POLYGON" && areaData.points && areaData.points.length > 0) {
         console.log("폴리곤 그리기 시작:", areaData.points);
 
         new google.maps.Polygon({
@@ -158,23 +93,22 @@ const MapArea: React.FC<MapAreaProps> = ({
           map: map,
         });
 
-        setTimeout(() => {
-          const lats = areaData.points.map((p) => p.lat);
-          const lngs = areaData.points.map((p) => p.lng);
-          const center = {
-            lat: lats.reduce((sum, lat) => sum + lat, 0) / lats.length,
-            lng: lngs.reduce((sum, lng) => sum + lng, 0) / lngs.length,
-          };
+        // 폴리곤의 모든 점을 포함하는 bounds 생성
+        const bounds = new google.maps.LatLngBounds();
+        areaData.points.forEach((point) => {
+          bounds.extend(new google.maps.LatLng(point.lat, point.lng));
+        });
 
-          map.setCenter(center);
-
-          console.log("폴리곤 그리기 완료, 줌 유지:", {
-            points: areaData.points.length,
-            center: center,
-            currentZoom: map.getZoom(),
-          });
-        }, 100);
+        map.fitBounds(bounds);
       }
+
+      // 지도 로드 완료 후 최종 줌 레벨 확인
+      google.maps.event.addListenerOnce(map, "idle", () => {
+        console.log("지도 로드 완료, 최종 설정:", {
+          center: map.getCenter()?.toJSON(),
+          zoom: map.getZoom()
+        });
+      });
 
       // 지도 클릭 이벤트
       map.addListener("click", (event: google.maps.MapMouseEvent) => {
@@ -184,6 +118,7 @@ const MapArea: React.FC<MapAreaProps> = ({
           console.log("지도 클릭 좌표:", { lat, lng, zoom: map.getZoom() });
         }
       });
+
     } catch (err) {
       console.error("지도 초기화 오류:", err);
     }
