@@ -1,4 +1,3 @@
-// src/utils/GoogleMapsLoader.ts
 interface WindowWithGoogleMaps extends Window {
   [key: string]: unknown;
 }

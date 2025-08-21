@@ -29,3 +29,9 @@
 .map-area-svg polygon:hover {
   fill-opacity: 0.5;
 }
+
+.map-area-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

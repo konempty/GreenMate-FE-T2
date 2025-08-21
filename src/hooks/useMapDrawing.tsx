@@ -31,22 +31,28 @@ export const useMapDrawing = ({ onAreaChange }: UseMapDrawingProps) => {
     }
   };
 
-  // Google Maps 좌표를 사용하는 클릭 핸들러
   const handleMapClick = (latLng: { lat: number; lng: number }) => {
-    if (!isDrawing || !areaType) return;
+    console.log("handleMapClick called:", { latLng, isDrawing, areaType });
+
+    if (!isDrawing || !areaType) {
+      console.log("Not drawing or no area type selected");
+      return;
+    }
 
     if (areaType === "polygon") {
       const newPoint: Point = { lat: latLng.lat, lng: latLng.lng };
       const newPoints = [...polygonPoints, newPoint];
+      console.log("Adding polygon point:", newPoint, "Total points:", newPoints.length);
       setPolygonPoints(newPoints);
       onAreaChange?.({ type: "polygon", points: newPoints });
     } else if (areaType === "circle") {
       if (!circleData) {
         // 원의 중심점 설정
         const center: Point = { lat: latLng.lat, lng: latLng.lng };
+        console.log("Setting circle center:", center);
         setCircleData({ center, radius: 0 });
       } else {
-        // 원의 반지름 계산 (미터 단위)
+        // 원의 반지름 계산
         const radius = calculateDistance(
           circleData.center.lat,
           circleData.center.lng,
@@ -54,6 +60,7 @@ export const useMapDrawing = ({ onAreaChange }: UseMapDrawingProps) => {
           latLng.lng,
         );
         const newCircleData = { ...circleData, radius };
+        console.log("Setting circle radius:", radius, "Final circle:", newCircleData);
         setCircleData(newCircleData);
         setIsDrawing(false);
         onAreaChange?.({ type: "circle", data: newCircleData });
@@ -61,7 +68,7 @@ export const useMapDrawing = ({ onAreaChange }: UseMapDrawingProps) => {
     }
   };
 
-  // 마우스 위치 추적 (Google Maps 좌표)
+  // 마우스 위치 추적
   const handleMapMouseMove = (latLng: { lat: number; lng: number }) => {
     if (!isDrawing || !areaType) return;
     setMousePosition({ lat: latLng.lat, lng: latLng.lng });
@@ -90,25 +97,17 @@ export const useMapDrawing = ({ onAreaChange }: UseMapDrawingProps) => {
     setMapType(type);
   };
 
-  // 두 지점 간의 거리 계산 (미터 단위)
+  // 픽셀 좌표계에서의 거리 계산
   const calculateDistance = (
     lat1: number,
     lng1: number,
     lat2: number,
     lng2: number,
   ): number => {
-    const R = 6371e3; // 지구 반지름 (미터)
-    const φ1 = (lat1 * Math.PI) / 180;
-    const φ2 = (lat2 * Math.PI) / 180;
-    const Δφ = ((lat2 - lat1) * Math.PI) / 180;
-    const Δλ = ((lng2 - lng1) * Math.PI) / 180;
-
-    const a =
-      Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-      Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-    return R * c; // 미터 단위 거리
+    // 간단한 유클리드 거리 계산
+    const deltaX = lng2 - lng1;
+    const deltaY = lat2 - lat1;
+    return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
   };
 
   // 현재 마우스 위치에서의 임시 원 반지름 계산
