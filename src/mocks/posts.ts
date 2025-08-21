@@ -257,10 +257,10 @@ export const MOCK_POSTS: Post[] = [
       data: {
         center: {
           lat: 36.61029738127031,
-          lng: 127.28513401351398
+          lng: 127.28513401351398,
         },
-        radius: 392.24111263876654
-      }
+        radius: 392.24111263876654,
+      },
     },
     comments: [],
   },

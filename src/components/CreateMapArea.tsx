@@ -16,8 +16,12 @@ interface MapAreaProps {
 const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
-  const drawingManagerRef = useRef<google.maps.drawing.DrawingManager | null>(null);
-  const currentShapeRef = useRef<google.maps.Circle | google.maps.Polygon | null>(null);
+  const drawingManagerRef = useRef<google.maps.drawing.DrawingManager | null>(
+    null,
+  );
+  const currentShapeRef = useRef<
+    google.maps.Circle | google.maps.Polygon | null
+  >(null);
 
   const [areaType, setAreaType] = useState<"circle" | "polygon" | null>(null);
   const [mapType, setMapType] = useState<"map" | "satellite">("map");
@@ -36,9 +40,10 @@ const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
       const map = new google.maps.Map(mapRef.current, {
         zoom: 13,
         center: { lat: 37.5665, lng: 126.978 },
-        mapTypeId: mapType === "satellite" 
-          ? google.maps.MapTypeId.SATELLITE 
-          : google.maps.MapTypeId.ROADMAP,
+        mapTypeId:
+          mapType === "satellite"
+            ? google.maps.MapTypeId.SATELLITE
+            : google.maps.MapTypeId.ROADMAP,
         disableDefaultUI: false,
         zoomControl: true,
         mapTypeControl: false,
@@ -78,15 +83,23 @@ const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
       drawingManagerRef.current = drawingManager;
 
       // 도형 완성 이벤트 리스너
-      google.maps.event.addListener(drawingManager, 'circlecomplete', (circle: google.maps.Circle) => {
-        console.log('원 그리기 완료');
-        handleShapeComplete(circle, 'circle');
-      });
+      google.maps.event.addListener(
+        drawingManager,
+        "circlecomplete",
+        (circle: google.maps.Circle) => {
+          console.log("원 그리기 완료");
+          handleShapeComplete(circle, "circle");
+        },
+      );
 
-      google.maps.event.addListener(drawingManager, 'polygoncomplete', (polygon: google.maps.Polygon) => {
-        console.log('폴리곤 그리기 완료');
-        handleShapeComplete(polygon, 'polygon');
-      });
+      google.maps.event.addListener(
+        drawingManager,
+        "polygoncomplete",
+        (polygon: google.maps.Polygon) => {
+          console.log("폴리곤 그리기 완료");
+          handleShapeComplete(polygon, "polygon");
+        },
+      );
 
       console.log("CreateMapArea 지도 초기화 완료");
     } catch (err) {
@@ -96,8 +109,8 @@ const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
 
   // 도형 완성 처리
   const handleShapeComplete = (
-    shape: google.maps.Circle | google.maps.Polygon, 
-    type: 'circle' | 'polygon'
+    shape: google.maps.Circle | google.maps.Polygon,
+    type: "circle" | "polygon",
   ) => {
     // 기존 도형 제거
     if (currentShapeRef.current) {
@@ -114,53 +127,63 @@ const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
     setAreaType(null);
 
     // AreaData 생성 및 콜백 호출
-    if (type === 'circle' && shape instanceof google.maps.Circle) {
+    if (type === "circle" && shape instanceof google.maps.Circle) {
       const center = shape.getCenter();
       const radius = shape.getRadius();
-      
+
       if (center) {
         const areaData: AreaData = {
-          type: 'circle',
+          type: "circle",
           data: {
             center: {
               lat: center.lat(),
-              lng: center.lng()
+              lng: center.lng(),
             },
-            radius: radius
-          }
+            radius: radius,
+          },
         };
-        
-        console.log('원 데이터:', areaData);
+
+        console.log("원 데이터:", areaData);
         onAreaChange?.(areaData);
 
         // 편집 이벤트 리스너 추가
-        google.maps.event.addListener(shape, 'center_changed', () => updateCircleData(shape));
-        google.maps.event.addListener(shape, 'radius_changed', () => updateCircleData(shape));
+        google.maps.event.addListener(shape, "center_changed", () =>
+          updateCircleData(shape),
+        );
+        google.maps.event.addListener(shape, "radius_changed", () =>
+          updateCircleData(shape),
+        );
       }
-    } else if (type === 'polygon' && shape instanceof google.maps.Polygon) {
+    } else if (type === "polygon" && shape instanceof google.maps.Polygon) {
       const path = shape.getPath();
       const points = [];
-      
+
       for (let i = 0; i < path.getLength(); i++) {
         const point = path.getAt(i);
         points.push({
           lat: point.lat(),
-          lng: point.lng()
+          lng: point.lng(),
         });
       }
 
       const areaData: AreaData = {
-        type: 'polygon',
-        points: points
+        type: "polygon",
+        points: points,
       };
 
-      console.log('폴리곤 데이터:', areaData);
+      console.log("폴리곤 데이터:", areaData);
       onAreaChange?.(areaData);
 
       // 편집 이벤트 리스너 추가
-      google.maps.event.addListener(path, 'set_at', () => updatePolygonData(shape));
-      google.maps.event.addListener(path, 'insert_at', () => updatePolygonData(shape));
-      google.maps.event.addListener(path, 'remove_at', () => updatePolygonData(shape));
+      google.maps.event.addListener(path, "set_at", () =>
+        updatePolygonData(shape),
+      );
+      google.maps.event.addListener(path, "insert_at", () =>
+        updatePolygonData(shape),
+      );
+      google.maps.event.addListener(path, "remove_at", () =>
+        updatePolygonData(shape),
+      );
     }
   };
 
@@ -168,20 +191,20 @@ const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
   const updateCircleData = (circle: google.maps.Circle) => {
     const center = circle.getCenter();
     const radius = circle.getRadius();
-    
+
     if (center) {
       const areaData: AreaData = {
-        type: 'circle',
+        type: "circle",
         data: {
           center: {
             lat: center.lat(),
-            lng: center.lng()
+            lng: center.lng(),
           },
-          radius: radius
-        }
+          radius: radius,
+        },
       };
-      
-      console.log('원 데이터 업데이트:', areaData);
+
+      console.log("원 데이터 업데이트:", areaData);
       onAreaChange?.(areaData);
     }
   };
@@ -190,21 +213,21 @@ const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
   const updatePolygonData = (polygon: google.maps.Polygon) => {
     const path = polygon.getPath();
     const points = [];
-    
+
     for (let i = 0; i < path.getLength(); i++) {
       const point = path.getAt(i);
       points.push({
         lat: point.lat(),
-        lng: point.lng()
+        lng: point.lng(),
       });
     }
 
     const areaData: AreaData = {
-      type: 'polygon',
-      points: points
+      type: "polygon",
+      points: points,
     };
 
-    console.log('폴리곤 데이터 업데이트:', areaData);
+    console.log("폴리곤 데이터 업데이트:", areaData);
     onAreaChange?.(areaData);
   };
 
@@ -219,9 +242,13 @@ const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
     } else {
       setAreaType(type);
       if (type === "circle") {
-        drawingManagerRef.current.setDrawingMode(google.maps.drawing.OverlayType.CIRCLE);
+        drawingManagerRef.current.setDrawingMode(
+          google.maps.drawing.OverlayType.CIRCLE,
+        );
       } else {
-        drawingManagerRef.current.setDrawingMode(google.maps.drawing.OverlayType.POLYGON);
+        drawingManagerRef.current.setDrawingMode(
+          google.maps.drawing.OverlayType.POLYGON,
+        );
       }
     }
   };
@@ -232,16 +259,16 @@ const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
       currentShapeRef.current.setMap(null);
       currentShapeRef.current = null;
     }
-    
+
     setAreaType(null);
     setHasAreaData(false);
-    
+
     if (drawingManagerRef.current) {
       drawingManagerRef.current.setDrawingMode(null);
     }
-    
+
     onAreaChange?.(null);
-    console.log('영역 지우기 완료');
+    console.log("영역 지우기 완료");
   };
 
   // 지도 타입 변경
@@ -249,9 +276,9 @@ const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
     setMapType(type);
     if (mapInstanceRef.current) {
       mapInstanceRef.current.setMapTypeId(
-        type === "satellite" 
-          ? google.maps.MapTypeId.SATELLITE 
-          : google.maps.MapTypeId.ROADMAP
+        type === "satellite"
+          ? google.maps.MapTypeId.SATELLITE
+          : google.maps.MapTypeId.ROADMAP,
       );
     }
   };
@@ -358,8 +385,9 @@ const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
                 zIndex: 1000,
               }}
             >
-              {areaType === "circle" ? "🔵 지도를 클릭하고 드래그하여 원을 그리세요" : 
-               "🔷 지도를 클릭하여 다각형 점을 추가하세요"}
+              {areaType === "circle"
+                ? "🔵 지도를 클릭하고 드래그하여 원을 그리세요"
+                : "🔷 지도를 클릭하여 다각형 점을 추가하세요"}
             </div>
           )}
 

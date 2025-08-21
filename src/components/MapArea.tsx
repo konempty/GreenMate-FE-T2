@@ -21,14 +21,24 @@ const MapArea: React.FC<MapAreaProps> = ({ areaData, height = 300 }) => {
       const center = areaData.data.center;
       const radius = areaData.data.radius;
 
-      const radiusThresholds = [5000, 2000, 1000, 500, 200, 100, 50, 0];
-      const radiusZooms = [10, 11, 12, 13, 14, 15, 16, 17];
-      const zoom =
-        radiusZooms[
-          radiusThresholds.findIndex((threshold) => radius >= threshold)
-        ];
+      // 수정된 원형 영역 줌 계산
+      const radiusThresholds = [500, 400, 350, 300, 250, 200, 150, 100, 50, 0];
+      const radiusZooms = [15, 15, 16, 16, 16, 16, 16, 17, 18, 19];
 
-      console.log("원형 영역:", { center, radius, zoom });
+      // findIndex가 -1을 반환하는 경우 처리
+      const zoomIndex = radiusThresholds.findIndex(
+        (threshold) => radius >= threshold,
+      );
+      const zoom = zoomIndex !== -1 ? radiusZooms[zoomIndex] : 19; // 기본값 19
+
+      console.log("원형 영역 줌 계산:", {
+        center,
+        radius,
+        zoomIndex,
+        zoom,
+        radiusThresholds,
+        radiusZooms,
+      });
       return { center, zoom };
     } else if (
       areaData.type === "polygon" &&
@@ -47,19 +57,29 @@ const MapArea: React.FC<MapAreaProps> = ({ areaData, height = 300 }) => {
         Math.max(...lngs) - Math.min(...lngs),
       );
 
+      // 폴리곤 영역 줌 계산
       const spanThresholds = [
-        0.1, 0.05, 0.02, 0.01, 0.005, 0.002, 0.001, 0.0005, 0,
+        0.01, 0.005, 0.003, 0.002, 0.001, 0.0005, 0.0002, 0.0001, 0,
       ];
-      const spanZooms = [9, 10, 11, 12, 13, 14, 15, 16, 17];
-      const zoom =
-        spanZooms[
-          spanThresholds.findIndex((threshold) => maxSpan >= threshold)
-        ];
+      const spanZooms = [14, 15, 16, 18, 19, 20, 21, 22, 23];
 
-      console.log("폴리곤 영역:", { center, maxSpan, zoom });
+      const zoomIndex = spanThresholds.findIndex(
+        (threshold) => maxSpan >= threshold,
+      );
+      const zoom = zoomIndex !== -1 ? spanZooms[zoomIndex] : 20; // 기본값 20
+
+      console.log("폴리곤 영역 줌 계산:", {
+        center,
+        maxSpan,
+        zoomIndex,
+        zoom,
+        spanThresholds,
+        spanZooms,
+      });
       return { center, zoom };
     }
 
+    console.log("기본 설정 사용");
     return { center: { lat: 37.5665, lng: 126.978 }, zoom: 15 };
   };
 
@@ -71,6 +91,7 @@ const MapArea: React.FC<MapAreaProps> = ({ areaData, height = 300 }) => {
       console.log("지도 초기화 시작...");
 
       const mapConfig = calculateMapConfig(areaData);
+      console.log("계산된 지도 설정:", mapConfig);
 
       const map = new google.maps.Map(mapRef.current, {
         zoom: mapConfig.zoom,
@@ -83,13 +104,22 @@ const MapArea: React.FC<MapAreaProps> = ({ areaData, height = 300 }) => {
         streetViewControl: false,
         rotateControl: false,
         fullscreenControl: false,
+        maxZoom: 20,
+        minZoom: 8,
       });
 
       mapInstanceRef.current = map;
-      console.log("지도 생성 완료", mapConfig);
+      console.log("지도 생성 완료, 현재 줌:", map.getZoom());
+
+      // 지도 로드 완료 후 줌 확인
+      google.maps.event.addListenerOnce(map, "idle", () => {
+        console.log("지도 로드 완료, 최종 줌:", map.getZoom());
+      });
 
       // 도형 그리기
       if (areaData.type === "circle" && areaData.data) {
+        console.log("원 그리기 시작:", areaData.data);
+
         // 원 그리기
         new google.maps.Circle({
           strokeColor: "#4a90e2",
@@ -102,41 +132,38 @@ const MapArea: React.FC<MapAreaProps> = ({ areaData, height = 300 }) => {
           radius: areaData.data.radius,
         });
 
-        // 원의 경계에 맞게 지도 조정 (더 정확한 피팅)
-        const bounds = new google.maps.LatLngBounds();
-        const center = areaData.data.center;
-        const radius = areaData.data.radius;
+        // 원의 경계에 맞게 지도 조정하지만 초기 줌 레벨 유지
+        setTimeout(() => {
+          const bounds = new google.maps.LatLngBounds();
+          const center = areaData.data.center;
+          const radius = areaData.data.radius;
 
-        // 원의 대략적인 경계 계산 (위도/경도 변환)
-        const latOffset = radius / 111320; // 1도 ≈ 111.32km
-        const lngOffset =
-          radius / (111320 * Math.cos((center.lat * Math.PI) / 180));
+          // 원의 대략적인 경계 계산
+          const latOffset = radius / 111320;
+          const lngOffset =
+            radius / (111320 * Math.cos((center.lat * Math.PI) / 180));
 
-        bounds.extend({
-          lat: center.lat + latOffset,
-          lng: center.lng + lngOffset,
-        });
-        bounds.extend({
-          lat: center.lat - latOffset,
-          lng: center.lng - lngOffset,
-        });
-        bounds.extend({
-          lat: center.lat + latOffset,
-          lng: center.lng - lngOffset,
-        });
-        bounds.extend({
-          lat: center.lat - latOffset,
-          lng: center.lng + lngOffset,
-        });
+          bounds.extend({
+            lat: center.lat + latOffset,
+            lng: center.lng + lngOffset,
+          });
+          bounds.extend({
+            lat: center.lat - latOffset,
+            lng: center.lng - lngOffset,
+          });
 
-        // 약간의 패딩을 주어 여유 공간 확보
-        map.fitBounds(bounds, { top: 50, right: 50, bottom: 50, left: 50 });
+          // fitBounds 대신 center만 조정하고 줌은 유지
+          map.setCenter(center);
 
-        console.log("원 그리기 완료:", {
-          center: areaData.data.center,
-          radius: areaData.data.radius,
-        });
+          console.log("원 그리기 완료, 줌 유지:", {
+            center: areaData.data.center,
+            radius: areaData.data.radius,
+            currentZoom: map.getZoom(),
+          });
+        }, 100);
       } else if (areaData.type === "polygon" && areaData.points) {
+        console.log("폴리곤 그리기 시작:", areaData.points);
+
         // 폴리곤 그리기
         new google.maps.Polygon({
           paths: areaData.points,
@@ -148,19 +175,23 @@ const MapArea: React.FC<MapAreaProps> = ({ areaData, height = 300 }) => {
           map: map,
         });
 
-        // 폴리곤의 경계에 맞게 지도 조정
-        const bounds = new google.maps.LatLngBounds();
-        areaData.points.forEach((point) => {
-          bounds.extend({ lat: point.lat, lng: point.lng });
-        });
+        // 폴리곤의 중심으로 이동하지만 줌은 유지
+        setTimeout(() => {
+          const lats = areaData.points.map((p) => p.lat);
+          const lngs = areaData.points.map((p) => p.lng);
+          const center = {
+            lat: lats.reduce((sum, lat) => sum + lat, 0) / lats.length,
+            lng: lngs.reduce((sum, lng) => sum + lng, 0) / lngs.length,
+          };
 
-        // 약간의 패딩을 주어 여유 공간 확보
-        map.fitBounds(bounds, { top: 50, right: 50, bottom: 50, left: 50 });
+          map.setCenter(center);
 
-        console.log("폴리곤 그리기 완료:", {
-          points: areaData.points.length,
-          coords: areaData.points,
-        });
+          console.log("폴리곤 그리기 완료, 줌 유지:", {
+            points: areaData.points.length,
+            center: center,
+            currentZoom: map.getZoom(),
+          });
+        }, 100);
       }
 
       // 지도 클릭 이벤트 (좌표 확인용)
@@ -168,7 +199,7 @@ const MapArea: React.FC<MapAreaProps> = ({ areaData, height = 300 }) => {
         if (event.latLng) {
           const lat = event.latLng.lat();
           const lng = event.latLng.lng();
-          console.log("지도 클릭 좌표:", { lat, lng });
+          console.log("지도 클릭 좌표:", { lat, lng, zoom: map.getZoom() });
         }
       });
     } catch (err) {
