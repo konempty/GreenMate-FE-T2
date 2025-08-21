@@ -132,7 +132,9 @@ const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
             {areaType === "polygon" && polygonPoints.length > 0 && (
               <>
                 <polygon
-                  points={polygonPoints.map((p) => `${p.lng},${p.lat}`).join(" ")}
+                  points={polygonPoints
+                    .map((p) => `${p.lng},${p.lat}`)
+                    .join(" ")}
                   fill="#C2DDF4"
                   stroke="#5997DA"
                   strokeWidth="2"

@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
+import type { AreaData } from "../types/mapArea";
 import GoogleMapsLoader from "../utils/GoogleMapsLoader";
 import "../styles/MapArea.css";
 
 interface MapAreaProps {
+  areaData?: AreaData;
   height?: number;
 }
 
-const MapArea: React.FC<MapAreaProps> = ({ height = 300 }) => {
+const MapArea: React.FC<MapAreaProps> = ({ areaData, height = 300 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -61,45 +63,41 @@ const MapArea: React.FC<MapAreaProps> = ({ height = 300 }) => {
       mapInstanceRef.current = map;
       console.log("지도 생성 완료");
 
-      // 원 그리기
-      new google.maps.Circle({
-        strokeColor: "#FF0000", // 빨간색 테두리
-        strokeOpacity: 0.8, // 테두리 투명도
-        strokeWeight: 2, // 테두리 두께
-        fillColor: "#FF0000", // 빨간색 채우기
-        fillOpacity: 0.35, // 채우기 투명도
-        map: map, // 지도에 연결
-        center: seoulCityHall, // 원의 중심
-        radius: 500, // 반지름 (미터 단위)
-      });
+      // 도형 그리기
+      if (areaData?.type === "circle") {
+        // 원 그리기
+        new google.maps.Circle({
+          strokeColor: "#4a90e2",
+          strokeOpacity: 0.8, // 테두리 투명도
+          strokeWeight: 2, // 테두리 두께
+          fillColor: "rgba(74, 144, 226, 0.3)",
+          fillOpacity: 0.5, // 채우기 투명도
+          map: map, // 지도에 연결
+          center: areaData?.data?.center, // 원의 중심
+          radius: areaData?.data?.radius, // 반지름 (미터 단위)
+        });
 
-      console.log("원 그리기 완료:", {
-        center: seoulCityHall,
-        radius: 500,
-      });
+        console.log("원 그리기 완료:", {
+          center: areaData?.data?.center,
+          radius: areaData?.data?.radius,
+        });
+      } else if (areaData?.type === "polygon"){
+        // 사각형 그리기
+        new google.maps.Polygon({
+          paths: areaData?.points,
+          strokeColor: "#4a90e2",
+          strokeOpacity: 0.8, // 테두리 투명도
+          strokeWeight: 2, // 테두리 두께
+          fillColor: "rgba(74, 144, 226, 0.3)",
+          fillOpacity: 0.5, // 채우기 투명도
+          map: map, // 지도에 연결
+        });
 
-      // 사각형 그리기
-      const pentagonCoords = [
-        { lat: 37.5662872715564, lng: 126.98766031598203 },
-        { lat: 37.56997323195251, lng: 126.99074383668992 },
-        { lat: 37.56827735067614, lng: 126.99851353454589 },
-        { lat: 37.56242639038775, lng: 126.99696858215331 },
-      ];
-
-      new google.maps.Polygon({
-        paths: pentagonCoords,
-        strokeColor: "#0000FF", // 파란색 테두리
-        strokeOpacity: 0.8, // 테두리 투명도
-        strokeWeight: 2, // 테두리 두께
-        fillColor: "#0000FF", // 파란색 채우기
-        fillOpacity: 0.35, // 채우기 투명도
-        map: map, // 지도에 연결
-      });
-
-      console.log("사각형 그리기 완료:", {
-        points: pentagonCoords.length,
-        coords: pentagonCoords,
-      });
+        console.log("사각형 그리기 완료:", {
+          points: areaData?.points?.length,
+          coords: areaData?.points,
+        });
+      }
 
       // 지도 클릭 이벤트 (좌표 확인용)
       map.addListener("click", (event: google.maps.MapMouseEvent) => {

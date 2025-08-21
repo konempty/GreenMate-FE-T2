@@ -42,7 +42,12 @@ export const useMapDrawing = ({ onAreaChange }: UseMapDrawingProps) => {
     if (areaType === "polygon") {
       const newPoint: Point = { lat: latLng.lat, lng: latLng.lng };
       const newPoints = [...polygonPoints, newPoint];
-      console.log("Adding polygon point:", newPoint, "Total points:", newPoints.length);
+      console.log(
+        "Adding polygon point:",
+        newPoint,
+        "Total points:",
+        newPoints.length,
+      );
       setPolygonPoints(newPoints);
       onAreaChange?.({ type: "polygon", points: newPoints });
     } else if (areaType === "circle") {
@@ -60,7 +65,12 @@ export const useMapDrawing = ({ onAreaChange }: UseMapDrawingProps) => {
           latLng.lng,
         );
         const newCircleData = { ...circleData, radius };
-        console.log("Setting circle radius:", radius, "Final circle:", newCircleData);
+        console.log(
+          "Setting circle radius:",
+          radius,
+          "Final circle:",
+          newCircleData,
+        );
         setCircleData(newCircleData);
         setIsDrawing(false);
         onAreaChange?.({ type: "circle", data: newCircleData });
