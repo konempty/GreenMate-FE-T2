@@ -1,21 +1,15 @@
-export interface PolygonPoint {
-  x: number;
-  y: number;
+export interface Point {
+  lat: number; // x -> lat로 변경
+  lng: number; // y -> lng로 변경
 }
 
 export interface CircleData {
-  center: { x: number; y: number };
-  radius: number;
+  center: Point;
+  radius: number; // 미터 단위
 }
 
-export interface PolygonAreaData {
-  type: "polygon";
-  points: PolygonPoint[];
+export interface AreaData {
+  type: "circle" | "polygon";
+  data?: CircleData;
+  points?: Point[];
 }
-
-export interface CircleAreaData {
-  type: "circle";
-  data: CircleData;
-}
-
-export type AreaData = PolygonAreaData | CircleAreaData | null;

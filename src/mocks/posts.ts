@@ -23,7 +23,7 @@ export interface Post {
   maxParticipants: number;
   participants: number;
   areaData: AreaData;
-  comments: Comment[]; // 댓글 추가
+  comments: Comment[];
 }
 
 export const MOCK_POSTS: Post[] = [
@@ -43,10 +43,10 @@ export const MOCK_POSTS: Post[] = [
     areaData: {
       type: "polygon",
       points: [
-        { x: 278, y: 63.78125 },
-        { x: 156, y: 174.78125 },
-        { x: 410, y: 268.78125 },
-        { x: 497, y: 83.78125 },
+        { lat: 37.5665, lng: 126.978 }, // 서울 시청 근처
+        { lat: 37.567, lng: 126.9785 },
+        { lat: 37.5675, lng: 126.9775 },
+        { lat: 37.566, lng: 126.977 },
       ],
     },
     comments: [
@@ -83,8 +83,8 @@ export const MOCK_POSTS: Post[] = [
     areaData: {
       type: "circle",
       data: {
-        center: { x: 316.5, y: 91.78125 },
-        radius: 180.88670487352022,
+        center: { lat: 37.5665, lng: 126.978 }, // 서울 시청
+        radius: 500, // 500미터 반경
       },
     },
     comments: [
@@ -130,10 +130,10 @@ export const MOCK_POSTS: Post[] = [
     areaData: {
       type: "polygon",
       points: [
-        { x: 200, y: 100 },
-        { x: 300, y: 150 },
-        { x: 250, y: 250 },
-        { x: 150, y: 200 },
+        { lat: 37.564, lng: 126.975 }, // 명동 근처
+        { lat: 37.565, lng: 126.976 },
+        { lat: 37.5645, lng: 126.977 },
+        { lat: 37.5635, lng: 126.976 },
       ],
     },
     comments: [
@@ -164,8 +164,8 @@ export const MOCK_POSTS: Post[] = [
     areaData: {
       type: "circle",
       data: {
-        center: { x: 400, y: 200 },
-        radius: 120.5,
+        center: { lat: 37.5705, lng: 126.981 }, // 경복궁 근처
+        radius: 300, // 300미터 반경
       },
     },
     comments: [
@@ -206,11 +206,11 @@ export const MOCK_POSTS: Post[] = [
     areaData: {
       type: "polygon",
       points: [
-        { x: 100, y: 50 },
-        { x: 200, y: 100 },
-        { x: 180, y: 180 },
-        { x: 80, y: 150 },
-        { x: 50, y: 100 },
+        { lat: 37.569, lng: 126.985 }, // 인사동 근처
+        { lat: 37.57, lng: 126.986 },
+        { lat: 37.5695, lng: 126.987 },
+        { lat: 37.5685, lng: 126.9865 },
+        { lat: 37.568, lng: 126.9855 },
       ],
     },
     comments: [], // 댓글이 없는 게시물
