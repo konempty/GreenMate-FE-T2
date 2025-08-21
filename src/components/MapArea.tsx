@@ -27,10 +27,10 @@ const MapArea: React.FC<MapAreaProps> = ({
     try {
       console.log("지도 초기화 시작...", { locationType, areaData });
 
-      // 기본 지도 생성 (초기 center와 zoom은 임시값)
+      // 기본 지도 생성 (초기 center와 zoom은 초기값)
       const map = new google.maps.Map(mapRef.current, {
-        zoom: 15, // 임시 줌 레벨
-        center: { lat: 37.5665, lng: 126.978 }, // 임시 중심점 (서울 시청)
+        zoom: 15, // 초기 줌 레벨
+        center: { lat: 37.5665, lng: 126.978 }, // 초기 중심점 (서울 시청)
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         disableDefaultUI: false,
         zoomControl: true,
@@ -67,7 +67,8 @@ const MapArea: React.FC<MapAreaProps> = ({
         const radius = areaData.data.radius;
 
         const latOffset = radius / 111320;
-        const lngOffset = radius / (111320 * Math.cos((center.lat * Math.PI) / 180));
+        const lngOffset =
+          radius / (111320 * Math.cos((center.lat * Math.PI) / 180));
 
         bounds.extend({
           lat: center.lat + latOffset,
@@ -79,8 +80,11 @@ const MapArea: React.FC<MapAreaProps> = ({
         });
 
         map.fitBounds(bounds);
-
-      } else if (locationType === "POLYGON" && areaData.points && areaData.points.length > 0) {
+      } else if (
+        locationType === "POLYGON" &&
+        areaData.points &&
+        areaData.points.length > 0
+      ) {
         console.log("폴리곤 그리기 시작:", areaData.points);
 
         new google.maps.Polygon({
@@ -106,7 +110,7 @@ const MapArea: React.FC<MapAreaProps> = ({
       google.maps.event.addListenerOnce(map, "idle", () => {
         console.log("지도 로드 완료, 최종 설정:", {
           center: map.getCenter()?.toJSON(),
-          zoom: map.getZoom()
+          zoom: map.getZoom(),
         });
       });
 
@@ -118,7 +122,6 @@ const MapArea: React.FC<MapAreaProps> = ({
           console.log("지도 클릭 좌표:", { lat, lng, zoom: map.getZoom() });
         }
       });
-
     } catch (err) {
       console.error("지도 초기화 오류:", err);
     }
