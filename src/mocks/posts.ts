@@ -215,4 +215,53 @@ export const MOCK_POSTS: Post[] = [
     },
     comments: [], // 댓글이 없는 게시물
   },
+  {
+    id: 6,
+    publisher_id: "test_creator",
+    publisher_image: "/src/mocks/images/profile.jpg",
+    title: "폴리곤 영역 저장 테스트",
+    description: "실제 작성한 위치와 같게 나오는지 테스트",
+    date: "2025-08-27",
+    time: "00:59",
+    endDate: "2025-08-30",
+    activityDate: "2025-08-30",
+    images: [],
+    maxParticipants: 123,
+    participants: 0,
+    areaData: {
+      type: "polygon",
+      points: [
+        { lat: 37.564231334994055, lng: 126.99045650208022 },
+        { lat: 37.563967697176665, lng: 126.98964647495772 },
+        { lat: 37.563414905175655, lng: 126.9908320113423 },
+        { lat: 37.56415054285883, lng: 126.99156157219436 },
+      ],
+    },
+    comments: [],
+  },
+  {
+    id: 7,
+    publisher_id: "circle_tester",
+    publisher_image: "/src/mocks/images/profile.jpg",
+    title: "원 영역 저장 테스트",
+    description: "실제 작성한 위치와 같게 나오는지 테스트",
+    date: "2025-08-31",
+    time: "04:03",
+    endDate: "2025-09-10",
+    activityDate: "2025-09-10",
+    images: [],
+    maxParticipants: 10,
+    participants: 0,
+    areaData: {
+      type: "circle",
+      data: {
+        center: {
+          lat: 36.61029738127031,
+          lng: 127.28513401351398
+        },
+        radius: 392.24111263876654
+      }
+    },
+    comments: [],
+  },
 ];

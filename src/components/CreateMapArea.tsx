@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Circle, Pentagon } from "lucide-react";
 import Button from "./Button";
 import { Label } from "./label";
 import type { AreaData } from "../types/mapArea";
-import { useMapDrawing } from "../hooks/useMapDrawing";
-
+import { useGoogleMapsLoader } from "../hooks/useGoogleMapsLoader";
+import GoogleMapsLoadingSpinner from "../utils/GoogleMapsLoadingSpinner";
+import GoogleMapsError from "../utils/GoogleMapsError";
 import "../styles/CreateMapArea.css";
 
 interface MapAreaProps {
@@ -13,51 +14,267 @@ interface MapAreaProps {
 }
 
 const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
-  const {
-    areaType,
-    polygonPoints,
-    circleData,
-    isDrawing,
-    mapType,
-    mousePosition,
-    hasAreaData,
-    canFinishPolygon,
-    handleAreaTypeSelect,
-    handleMapClick,
-    handleMapMouseMove,
-    handleMapMouseLeave,
-    finishPolygon,
-    clearArea,
-    handleMapTypeChange,
-  } = useMapDrawing({ onAreaChange });
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<google.maps.Map | null>(null);
+  const drawingManagerRef = useRef<google.maps.drawing.DrawingManager | null>(null);
+  const currentShapeRef = useRef<google.maps.Circle | google.maps.Polygon | null>(null);
 
-  // 안전한 클릭 핸들러
-  const handleCanvasClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+  const [areaType, setAreaType] = useState<"circle" | "polygon" | null>(null);
+  const [mapType, setMapType] = useState<"map" | "satellite">("map");
+  const [hasAreaData, setHasAreaData] = useState(false);
 
-    // 임시로 x,y 좌표를 lat,lng로 변환 (나중에 실제 Google Maps로 교체)
-    handleMapClick({ lat: y, lng: x });
+  const { isLoaded, isLoading, error, loadProgress } = useGoogleMapsLoader();
+
+  // 지도 초기화
+  useEffect(() => {
+    if (!isLoaded || !mapRef.current) return;
+
+    try {
+      console.log("CreateMapArea 지도 초기화 시작...");
+
+      // 서울 시청을 기본 중심으로 설정
+      const map = new google.maps.Map(mapRef.current, {
+        zoom: 13,
+        center: { lat: 37.5665, lng: 126.978 },
+        mapTypeId: mapType === "satellite" 
+          ? google.maps.MapTypeId.SATELLITE 
+          : google.maps.MapTypeId.ROADMAP,
+        disableDefaultUI: false,
+        zoomControl: true,
+        mapTypeControl: false,
+        scaleControl: true,
+        streetViewControl: false,
+        rotateControl: false,
+        fullscreenControl: false,
+      });
+
+      mapInstanceRef.current = map;
+
+      // Drawing Manager 초기화
+      const drawingManager = new google.maps.drawing.DrawingManager({
+        drawingMode: null,
+        drawingControl: false,
+        circleOptions: {
+          strokeColor: "#4a90e2",
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: "#4a90e2",
+          fillOpacity: 0.3,
+          editable: true,
+          draggable: true,
+        },
+        polygonOptions: {
+          strokeColor: "#4a90e2",
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: "#4a90e2",
+          fillOpacity: 0.3,
+          editable: true,
+          draggable: true,
+        },
+      });
+
+      drawingManager.setMap(map);
+      drawingManagerRef.current = drawingManager;
+
+      // 도형 완성 이벤트 리스너
+      google.maps.event.addListener(drawingManager, 'circlecomplete', (circle: google.maps.Circle) => {
+        console.log('원 그리기 완료');
+        handleShapeComplete(circle, 'circle');
+      });
+
+      google.maps.event.addListener(drawingManager, 'polygoncomplete', (polygon: google.maps.Polygon) => {
+        console.log('폴리곤 그리기 완료');
+        handleShapeComplete(polygon, 'polygon');
+      });
+
+      console.log("CreateMapArea 지도 초기화 완료");
+    } catch (err) {
+      console.error("CreateMapArea 지도 초기화 오류:", err);
+    }
+  }, [isLoaded, mapType]);
+
+  // 도형 완성 처리
+  const handleShapeComplete = (
+    shape: google.maps.Circle | google.maps.Polygon, 
+    type: 'circle' | 'polygon'
+  ) => {
+    // 기존 도형 제거
+    if (currentShapeRef.current) {
+      currentShapeRef.current.setMap(null);
+    }
+
+    currentShapeRef.current = shape;
+    setHasAreaData(true);
+
+    // 그리기 모드 해제
+    if (drawingManagerRef.current) {
+      drawingManagerRef.current.setDrawingMode(null);
+    }
+    setAreaType(null);
+
+    // AreaData 생성 및 콜백 호출
+    if (type === 'circle' && shape instanceof google.maps.Circle) {
+      const center = shape.getCenter();
+      const radius = shape.getRadius();
+      
+      if (center) {
+        const areaData: AreaData = {
+          type: 'circle',
+          data: {
+            center: {
+              lat: center.lat(),
+              lng: center.lng()
+            },
+            radius: radius
+          }
+        };
+        
+        console.log('원 데이터:', areaData);
+        onAreaChange?.(areaData);
+
+        // 편집 이벤트 리스너 추가
+        google.maps.event.addListener(shape, 'center_changed', () => updateCircleData(shape));
+        google.maps.event.addListener(shape, 'radius_changed', () => updateCircleData(shape));
+      }
+    } else if (type === 'polygon' && shape instanceof google.maps.Polygon) {
+      const path = shape.getPath();
+      const points = [];
+      
+      for (let i = 0; i < path.getLength(); i++) {
+        const point = path.getAt(i);
+        points.push({
+          lat: point.lat(),
+          lng: point.lng()
+        });
+      }
+
+      const areaData: AreaData = {
+        type: 'polygon',
+        points: points
+      };
+
+      console.log('폴리곤 데이터:', areaData);
+      onAreaChange?.(areaData);
+
+      // 편집 이벤트 리스너 추가
+      google.maps.event.addListener(path, 'set_at', () => updatePolygonData(shape));
+      google.maps.event.addListener(path, 'insert_at', () => updatePolygonData(shape));
+      google.maps.event.addListener(path, 'remove_at', () => updatePolygonData(shape));
+    }
   };
 
-  // 안전한 마우스 이동 핸들러
-  const handleCanvasMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-
-    // 임시로 x,y 좌표를 lat,lng로 변환 (나중에 실제 Google Maps로 교체)
-    handleMapMouseMove({ lat: y, lng: x });
+  // 원 데이터 업데이트
+  const updateCircleData = (circle: google.maps.Circle) => {
+    const center = circle.getCenter();
+    const radius = circle.getRadius();
+    
+    if (center) {
+      const areaData: AreaData = {
+        type: 'circle',
+        data: {
+          center: {
+            lat: center.lat(),
+            lng: center.lng()
+          },
+          radius: radius
+        }
+      };
+      
+      console.log('원 데이터 업데이트:', areaData);
+      onAreaChange?.(areaData);
+    }
   };
 
-  // 마지막 점의 안전한 접근
-  const getLastPoint = () => {
-    if (polygonPoints.length === 0) return null;
-    return polygonPoints[polygonPoints.length - 1];
+  // 폴리곤 데이터 업데이트
+  const updatePolygonData = (polygon: google.maps.Polygon) => {
+    const path = polygon.getPath();
+    const points = [];
+    
+    for (let i = 0; i < path.getLength(); i++) {
+      const point = path.getAt(i);
+      points.push({
+        lat: point.lat(),
+        lng: point.lng()
+      });
+    }
+
+    const areaData: AreaData = {
+      type: 'polygon',
+      points: points
+    };
+
+    console.log('폴리곤 데이터 업데이트:', areaData);
+    onAreaChange?.(areaData);
   };
 
-  const lastPoint = getLastPoint();
+  // 영역 타입 선택
+  const handleAreaTypeSelect = (type: "circle" | "polygon") => {
+    if (!drawingManagerRef.current) return;
+
+    if (areaType === type) {
+      // 같은 타입을 다시 클릭하면 해제
+      setAreaType(null);
+      drawingManagerRef.current.setDrawingMode(null);
+    } else {
+      setAreaType(type);
+      if (type === "circle") {
+        drawingManagerRef.current.setDrawingMode(google.maps.drawing.OverlayType.CIRCLE);
+      } else {
+        drawingManagerRef.current.setDrawingMode(google.maps.drawing.OverlayType.POLYGON);
+      }
+    }
+  };
+
+  // 영역 지우기
+  const clearArea = () => {
+    if (currentShapeRef.current) {
+      currentShapeRef.current.setMap(null);
+      currentShapeRef.current = null;
+    }
+    
+    setAreaType(null);
+    setHasAreaData(false);
+    
+    if (drawingManagerRef.current) {
+      drawingManagerRef.current.setDrawingMode(null);
+    }
+    
+    onAreaChange?.(null);
+    console.log('영역 지우기 완료');
+  };
+
+  // 지도 타입 변경
+  const handleMapTypeChange = (type: "map" | "satellite") => {
+    setMapType(type);
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.setMapTypeId(
+        type === "satellite" 
+          ? google.maps.MapTypeId.SATELLITE 
+          : google.maps.MapTypeId.ROADMAP
+      );
+    }
+  };
+
+  // 로딩 상태 처리
+  if (isLoading) {
+    return (
+      <div className={`map-area ${className || ""}`}>
+        <Label className="map-area-label">활동영역 *</Label>
+        <GoogleMapsLoadingSpinner progress={loadProgress} height={400} />
+      </div>
+    );
+  }
+
+  // 에러 상태 처리
+  if (error) {
+    return (
+      <div className={`map-area ${className || ""}`}>
+        <Label className="map-area-label">활동영역 *</Label>
+        <GoogleMapsError error={error} height={400} />
+      </div>
+    );
+  }
 
   return (
     <div className={`map-area ${className || ""}`}>
@@ -83,15 +300,6 @@ const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
       </div>
 
       <div className="map-area-controls">
-        {canFinishPolygon && (
-          <Button
-            type="button"
-            onClick={finishPolygon}
-            className="map-area-control-btn"
-          >
-            다각형 완성
-          </Button>
-        )}
         <Button
           type="button"
           onClick={clearArea}
@@ -103,13 +311,8 @@ const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
       </div>
 
       <div className="map-container">
-        <div
-          className="interactive-map"
-          onClick={handleCanvasClick}
-          onMouseMove={handleCanvasMouseMove}
-          onMouseLeave={handleMapMouseLeave}
-          style={{ cursor: isDrawing ? "crosshair" : "default" }}
-        >
+        <div className="interactive-map">
+          {/* 지도 타입 토글 */}
           <div className="map-toggle-overlay">
             <Button
               type="button"
@@ -127,114 +330,58 @@ const CreateMapArea: React.FC<MapAreaProps> = ({ className, onAreaChange }) => {
             </Button>
           </div>
 
-          <svg className="map-overlay">
-            {/* 폴리곤 표시 */}
-            {areaType === "polygon" && polygonPoints.length > 0 && (
-              <>
-                <polygon
-                  points={polygonPoints
-                    .map((p) => `${p.lng},${p.lat}`)
-                    .join(" ")}
-                  fill="#C2DDF4"
-                  stroke="#5997DA"
-                  strokeWidth="2"
-                />
-                {polygonPoints.map((point, index) => (
-                  <circle
-                    key={index}
-                    cx={point.lng}
-                    cy={point.lat}
-                    r="4"
-                    fill="#5997DA"
-                  />
-                ))}
-              </>
-            )}
-
-            {/* 폴리곤 그리기 중 임시 선 */}
-            {areaType === "polygon" &&
-              isDrawing &&
-              polygonPoints.length > 0 &&
-              mousePosition &&
-              lastPoint && (
-                <>
-                  <line
-                    x1={lastPoint.lng}
-                    y1={lastPoint.lat}
-                    x2={mousePosition.lng}
-                    y2={mousePosition.lat}
-                    stroke="#5997DA"
-                    strokeWidth="2"
-                    strokeDasharray="5,5"
-                    opacity="0.7"
-                  />
-                  {polygonPoints.length >= 2 && (
-                    <line
-                      x1={mousePosition.lng}
-                      y1={mousePosition.lat}
-                      x2={polygonPoints[0]?.lng || 0}
-                      y2={polygonPoints[0]?.lat || 0}
-                      stroke="#5997DA"
-                      strokeWidth="2"
-                      strokeDasharray="5,5"
-                      opacity="0.5"
-                    />
-                  )}
-                </>
-              )}
-
-            {/* 원 표시 */}
-            {areaType === "circle" && circleData && (
-              <>
-                <circle
-                  cx={circleData.center.lng}
-                  cy={circleData.center.lat}
-                  r={circleData.radius}
-                  fill="#C2DDF4"
-                  stroke="#5997DA"
-                  strokeWidth="2"
-                />
-              </>
-            )}
-
-            {/* 원 그리기 중 임시 원 */}
-            {areaType === "circle" &&
-              isDrawing &&
-              circleData &&
-              circleData.radius === 0 &&
-              mousePosition && (
-                <>
-                  <circle
-                    cx={circleData.center.lng}
-                    cy={circleData.center.lat}
-                    r={Math.sqrt(
-                      Math.pow(mousePosition.lng - circleData.center.lng, 2) +
-                        Math.pow(mousePosition.lat - circleData.center.lat, 2),
-                    )}
-                    fill="#C2DDF4"
-                    stroke="#5997DA"
-                    strokeWidth="2"
-                    strokeDasharray="5,5"
-                    opacity="0.7"
-                  />
-                </>
-              )}
-          </svg>
-
+          {/* 실제 Google Maps */}
           <div
+            ref={mapRef}
             style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              textAlign: "center",
-              color: "#666",
-              fontSize: "14px",
-              pointerEvents: "none",
+              width: "100%",
+              height: "400px",
+              borderRadius: "8px",
+              border: "1px solid #ddd",
             }}
-          >
-            <p>구글 맵 API가 연결될 예정입니다.</p>
-          </div>
+          />
+
+          {/* 상태 안내 */}
+          {areaType && (
+            <div
+              style={{
+                position: "absolute",
+                bottom: "16px",
+                left: "16px",
+                background: "rgba(255, 255, 255, 0.95)",
+                padding: "8px 12px",
+                borderRadius: "6px",
+                fontSize: "14px",
+                fontWeight: "500",
+                color: "#4a90e2",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                zIndex: 1000,
+              }}
+            >
+              {areaType === "circle" ? "🔵 지도를 클릭하고 드래그하여 원을 그리세요" : 
+               "🔷 지도를 클릭하여 다각형 점을 추가하세요"}
+            </div>
+          )}
+
+          {hasAreaData && (
+            <div
+              style={{
+                position: "absolute",
+                top: "16px",
+                right: "16px",
+                background: "rgba(40, 167, 69, 0.95)",
+                color: "white",
+                padding: "6px 10px",
+                borderRadius: "4px",
+                fontSize: "12px",
+                fontWeight: "600",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                zIndex: 1000,
+              }}
+            >
+              ✅ 영역 설정 완료
+            </div>
+          )}
         </div>
       </div>
     </div>
