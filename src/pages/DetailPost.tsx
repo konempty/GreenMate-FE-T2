@@ -171,7 +171,11 @@ const DetailPost = () => {
             <span className="detail-post-location-label">
               <MapPin size={16} /> 활동 영역
             </span>
-            <MapArea areaData={post.areaData} height={300} />
+            <MapArea
+              areaData={post.locationGeojson}
+              locationType={post.locationType}
+              height={300}
+            />
           </div>
 
           {/* 마감 시간 및 활동 일자 */}

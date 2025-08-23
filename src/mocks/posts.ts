@@ -1,4 +1,4 @@
-import type { AreaData } from "../types/mapArea";
+import type { AreaData, LocationType } from "../types/mapArea";
 
 export interface Comment {
   id: number;
@@ -22,8 +22,9 @@ export interface Post {
   images: string[];
   maxParticipants: number;
   participants: number;
-  areaData: AreaData;
-  comments: Comment[]; // 댓글 추가
+  locationType: LocationType;
+  locationGeojson: AreaData;
+  comments: Comment[];
 }
 
 export const MOCK_POSTS: Post[] = [
@@ -40,13 +41,13 @@ export const MOCK_POSTS: Post[] = [
     images: ["/src/mocks/images/cacao.jpg"],
     maxParticipants: 10,
     participants: 3,
-    areaData: {
-      type: "polygon",
+    locationType: "POLYGON",
+    locationGeojson: {
       points: [
-        { x: 278, y: 63.78125 },
-        { x: 156, y: 174.78125 },
-        { x: 410, y: 268.78125 },
-        { x: 497, y: 83.78125 },
+        { lat: 37.5665, lng: 126.978 }, // 서울 시청 근처
+        { lat: 37.567, lng: 126.9785 },
+        { lat: 37.5675, lng: 126.9775 },
+        { lat: 37.566, lng: 126.977 },
       ],
     },
     comments: [
@@ -80,11 +81,11 @@ export const MOCK_POSTS: Post[] = [
     images: ["/src/mocks/images/calendar.jpg", "/src/mocks/images/recycle.jpg"],
     maxParticipants: 20,
     participants: 19,
-    areaData: {
-      type: "circle",
+    locationType: "CIRCLE",
+    locationGeojson: {
       data: {
-        center: { x: 316.5, y: 91.78125 },
-        radius: 180.88670487352022,
+        center: { lat: 37.5665, lng: 126.978 }, // 서울 시청
+        radius: 500, // 500미터 반경
       },
     },
     comments: [
@@ -127,13 +128,13 @@ export const MOCK_POSTS: Post[] = [
     images: [],
     maxParticipants: 5,
     participants: 5,
-    areaData: {
-      type: "polygon",
+    locationType: "POLYGON",
+    locationGeojson: {
       points: [
-        { x: 200, y: 100 },
-        { x: 300, y: 150 },
-        { x: 250, y: 250 },
-        { x: 150, y: 200 },
+        { lat: 37.564, lng: 126.975 }, // 명동 근처
+        { lat: 37.565, lng: 126.976 },
+        { lat: 37.5645, lng: 126.977 },
+        { lat: 37.5635, lng: 126.976 },
       ],
     },
     comments: [
@@ -161,11 +162,11 @@ export const MOCK_POSTS: Post[] = [
     images: ["/src/mocks/images/cigarette.jpg"],
     maxParticipants: 15,
     participants: 8,
-    areaData: {
-      type: "circle",
+    locationType: "CIRCLE",
+    locationGeojson: {
       data: {
-        center: { x: 400, y: 200 },
-        radius: 120.5,
+        center: { lat: 37.5705, lng: 126.981 }, // 경복궁 근처
+        radius: 300, // 300미터 반경
       },
     },
     comments: [
@@ -203,16 +204,65 @@ export const MOCK_POSTS: Post[] = [
     ],
     maxParticipants: 30,
     participants: 0,
-    areaData: {
-      type: "polygon",
+    locationType: "POLYGON",
+    locationGeojson: {
       points: [
-        { x: 100, y: 50 },
-        { x: 200, y: 100 },
-        { x: 180, y: 180 },
-        { x: 80, y: 150 },
-        { x: 50, y: 100 },
+        { lat: 37.569, lng: 126.985 }, // 인사동 근처
+        { lat: 37.57, lng: 126.986 },
+        { lat: 37.5695, lng: 126.987 },
+        { lat: 37.5685, lng: 126.9865 },
+        { lat: 37.568, lng: 126.9855 },
       ],
     },
     comments: [], // 댓글이 없는 게시물
+  },
+  {
+    id: 6,
+    publisher_id: "test_creator",
+    publisher_image: "/src/mocks/images/profile.jpg",
+    title: "폴리곤 영역 저장 테스트",
+    description: "실제 작성한 위치와 같게 나오는지 테스트",
+    date: "2025-08-27",
+    time: "00:59",
+    endDate: "2025-08-30",
+    activityDate: "2025-08-30",
+    images: [],
+    maxParticipants: 123,
+    participants: 0,
+    locationType: "POLYGON",
+    locationGeojson: {
+      points: [
+        { lat: 37.564231334994055, lng: 126.99045650208022 },
+        { lat: 37.563967697176665, lng: 126.98964647495772 },
+        { lat: 37.563414905175655, lng: 126.9908320113423 },
+        { lat: 37.56415054285883, lng: 126.99156157219436 },
+      ],
+    },
+    comments: [],
+  },
+  {
+    id: 7,
+    publisher_id: "circle_tester",
+    publisher_image: "/src/mocks/images/profile.jpg",
+    title: "원 영역 저장 테스트",
+    description: "실제 작성한 위치와 같게 나오는지 테스트",
+    date: "2025-08-31",
+    time: "04:03",
+    endDate: "2025-09-10",
+    activityDate: "2025-09-10",
+    images: [],
+    maxParticipants: 10,
+    participants: 0,
+    locationType: "CIRCLE",
+    locationGeojson: {
+      data: {
+        center: {
+          lat: 36.61029738127031,
+          lng: 127.28513401351398,
+        },
+        radius: 392.24111263876654,
+      },
+    },
+    comments: [],
   },
 ];
