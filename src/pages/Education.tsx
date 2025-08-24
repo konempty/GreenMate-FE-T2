@@ -1,75 +1,51 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import "../styles/Education.css";
 import Header from "../components/Header";
 import { PageNavigation } from "../components/PageNavigation";
 import RecycleInfoModal from "../components/RecycleInfoModal";
 import Footer from "../components/Footer";
+import { fetchRecyclingEduPosts, type BackendPost } from "@/api/recyclingEdu";
+import { getErrorMessage, isAbortError } from "@/lib/http-error";
 
 type RecycleItem = {
+  id: number | string;
   title: string;
   image: string;
-  steps: string[];
+  content: string;
 };
 
-const items: RecycleItem[] = [
-  {
-    title: "유리병",
-    image: "src/components/images/glass.jpg",
-    steps: [
-      "내용물을 비웁니다.",
-      "물을 헹굽니다.",
-      "라벨을 제거합니다.",
-      "분리수거함에 버립니다.",
-    ],
-  },
-  {
-    title: "과자봉지",
-    image: "src/components/images/snack.jpg",
-    steps: [
-      "내용물을 비웁니다.",
-      "세척이 어렵다면 일반쓰레기로 버립니다.",
-      "깨끗이 세척했다면 비닐류로 분리 배출합니다.",
-    ],
-  },
-  {
-    title: "음료캔",
-    image: "src/components/images/can.jpg",
-    steps: [
-      "내용물을 비웁니다.",
-      "물로 헹굽니다.",
-      "가능하다면 압착 후 버립니다.",
-    ],
-  },
-  {
-    title: "플라스틱병",
-    image: "src/components/images/plastic.jpg",
-    steps: [
-      "내용물을 비웁니다.",
-      "라벨을 제거합니다.",
-      "뚜껑을 분리합니다.",
-      "가볍게 압축 후 배출합니다.",
-    ],
-  },
-];
+function toRecycleItem(p: BackendPost): RecycleItem {
+  return {
+    id: p.id,
+    title: p.title ?? `게시글 ${p.id}`,
+    image: p.imageUrl || "/recycle-placeholder.png",
+    content: p.content,
+  };
+}
 
-const Education = () => {
+export default function Education() {
+  const [items, setItems] = useState<RecycleItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<RecycleItem | null>(null);
-  const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    if (selectedItem && closeButtonRef.current) {
-      closeButtonRef.current.focus();
-    }
+    const controller = new AbortController();
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setSelectedItem(null);
+    const load = async () => {
+      try {
+        const list = await fetchRecyclingEduPosts(controller.signal);
+        setItems(list.map(toRecycleItem));
+      } catch (err: unknown) {
+        if (!isAbortError(err)) setError(getErrorMessage(err));
+      } finally {
+        setLoading(false);
       }
     };
 
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [selectedItem]);
+    void load();
+    return () => controller.abort();
+  }, []);
 
   return (
     <div className="recycle-page">
@@ -80,18 +56,26 @@ const Education = () => {
 
       <main className="recycle-container">
         <h2 className="recycle-title">분리수거 학습</h2>
-        <div className="recycle-grid">
-          {items.map((item, idx) => (
-            <div
-              key={idx}
-              className="recycle-card"
-              onClick={() => setSelectedItem(item)}
-            >
-              <img src={item.image} alt={item.title} />
-              <p>{item.title}</p>
-            </div>
-          ))}
-        </div>
+
+        {loading && <div>불러오는 중…</div>}
+        {error && !loading && <div className="error">에러: {error}</div>}
+
+        {!loading && !error && (
+          <div className="recycle-grid">
+            {items.map((item) => (
+              <button
+                key={item.id}
+                className="recycle-card"
+                onClick={() => setSelectedItem(item)}
+                type="button"
+              >
+                <img src={item.image} alt={item.title} loading="lazy" />
+                <p>{item.title}</p>
+              </button>
+            ))}
+            {!items.length && <div>게시글이 없습니다.</div>}
+          </div>
+        )}
 
         <div className="recycle-tip">
           <span className="material-icons-outlined">info</span>
@@ -113,6 +97,4 @@ const Education = () => {
       <Footer />
     </div>
   );
-};
-
-export default Education;
+}

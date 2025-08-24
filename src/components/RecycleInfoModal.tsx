@@ -1,9 +1,10 @@
 import { useEffect, useRef } from "react";
+import Markdown from "@/components/Markdown";
 
 type RecycleItem = {
   title: string;
   image: string;
-  steps: string[];
+  content: string;
 };
 
 type Props = {
@@ -21,8 +22,15 @@ const RecycleInfoModal = ({ item, onClose }: Props) => {
       if (e.key === "Escape") onClose();
     };
 
+    // 배경 스크롤 잠금
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
     document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = prev;
+    };
   }, [onClose]);
 
   return (
@@ -41,13 +49,9 @@ const RecycleInfoModal = ({ item, onClose }: Props) => {
         <h3 id="modal-title" className="modal-title">
           {item.title} 재활용 방법
         </h3>
-        <ul className="modal-steps">
-          {item.steps.map((step, index) => (
-            <li key={index}>
-              {index + 1}. {step}
-            </li>
-          ))}
-        </ul>
+        <div className="markdown-body">
+          <Markdown>{item.content}</Markdown>
+        </div>
       </div>
     </div>
   );
