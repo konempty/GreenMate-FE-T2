@@ -16,11 +16,16 @@ export default function ChatWidget() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     const el = listRef.current;
     if (el) el.scrollTop = el.scrollHeight;
   }, [messages, open]);
+  // 언마운트 시 진행 중 요청 취소
+  useEffect(() => {
+    return () => abortControllerRef.current?.abort();
+  }, []);
 
   const handleSend = async () => {
     const text = input.trim();
@@ -28,18 +33,20 @@ export default function ChatWidget() {
     setError(null);
 
     const userMsg: Msg = { id: uid(), role: "user", content: text };
+    const history: ChatMessage[] = [...messages, userMsg].map(
+      ({ role, content }) => ({ role, content }),
+    );
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
 
-    const controller = new AbortController();
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = new AbortController();
     setLoading(true);
     try {
-      const payload = [...messages, userMsg].map(({ role, content }) => ({
-        role,
-        content,
-      })) as ChatMessage[];
-
-      const { reply } = await sendChat(payload, controller.signal);
+      const { reply } = await sendChat(
+        history,
+        abortControllerRef.current.signal,
+      );
       const botMsg: Msg = { id: uid(), role: "assistant", content: reply };
       setMessages((prev) => [...prev, botMsg]);
     } catch (err: unknown) {
