@@ -1,7 +1,5 @@
 import { useEffect, useRef } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeSanitize from "rehype-sanitize";
+import Markdown from "@/components/Markdown";
 
 type RecycleItem = {
   title: string;
@@ -52,12 +50,7 @@ const RecycleInfoModal = ({ item, onClose }: Props) => {
           {item.title} 재활용 방법
         </h3>
         <div className="markdown-body">
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeSanitize]}
-          >
-            {item.content}
-          </ReactMarkdown>
+          <Markdown>{item.content}</Markdown>
         </div>
       </div>
     </div>

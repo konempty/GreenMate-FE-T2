@@ -1,4 +1,4 @@
-import { api } from "./client";
+import { getJSON } from "./http";
 
 export type BackendPost = {
   id: number;
@@ -8,19 +8,17 @@ export type BackendPost = {
   createdAt: string;
 };
 
-export async function fetchRecyclingEduPosts(signal?: AbortSignal) {
-  const res = await api.get<BackendPost[]>("/v1/recycling-edu-posts", {
-    signal,
-  });
-  return res.data;
+// 목록
+export function fetchRecyclingEduPosts(
+  signal?: AbortSignal,
+  params?: { page?: number; size?: number; q?: string; sort?: string },
+) {
+  return getJSON<BackendPost[]>("/v1/recycling-edu-posts", { signal, params });
 }
 
-export async function fetchRecyclingEduPost(
-  id: string | number,
+export function fetchRecyclingEduPost(
+  id: number | string,
   signal?: AbortSignal,
 ) {
-  const res = await api.get<BackendPost>(`/v1/recycling-edu-posts/${id}`, {
-    signal,
-  });
-  return res.data;
+  return getJSON<BackendPost>(`/v1/recycling-edu-posts/${id}`, { signal });
 }
