@@ -1,9 +1,12 @@
 import { useEffect, useRef } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeSanitize from "rehype-sanitize";
 
 type RecycleItem = {
   title: string;
   image: string;
-  steps: string[];
+  content: string;
 };
 
 type Props = {
@@ -48,13 +51,14 @@ const RecycleInfoModal = ({ item, onClose }: Props) => {
         <h3 id="modal-title" className="modal-title">
           {item.title} 재활용 방법
         </h3>
-        <ul className="modal-steps">
-          {item.steps.map((step, index) => (
-            <li key={index}>
-              {index + 1}. {step}
-            </li>
-          ))}
-        </ul>
+        <div className="markdown-body">
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeSanitize]}
+          >
+            {item.content}
+          </ReactMarkdown>
+        </div>
       </div>
     </div>
   );

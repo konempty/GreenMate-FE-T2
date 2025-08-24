@@ -4,10 +4,10 @@ import Header from "../components/Header";
 import { PageNavigation } from "../components/PageNavigation";
 import RecycleInfoModal from "../components/RecycleInfoModal";
 import Footer from "../components/Footer";
-import { fetchRecyclingEduPosts, type BackendPost } from "../api/recyclingEdu";
+import { fetchRecyclingEduPosts, type BackendPost } from "@/api/recyclingEdu";
 import axios from "axios";
 
-type RecycleItem = { title: string; image: string; steps: string[] };
+type RecycleItem = { title: string; image: string; content: string };
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null;
@@ -40,32 +40,11 @@ function isAbortedError(err: unknown): boolean {
   );
 }
 
-function stripMd(s: string) {
-  return s.replace(/\*\*|__|`/g, "").trim();
-}
-
-function extractStepsFromContent(content?: string): string[] {
-  if (!content) return [];
-  const lines = content.split(/\r?\n/);
-
-  const bulletSteps = lines
-    .filter((l) => /^\s*[-•]/.test(l))
-    .map((l) => stripMd(l.replace(/^\s*[-•]\s*/, "")))
-    .filter(Boolean);
-
-  if (bulletSteps.length) return bulletSteps;
-
-  const byLine = lines.map(stripMd).filter(Boolean);
-  if (byLine.length >= 2) return byLine;
-
-  return [stripMd(content)];
-}
-
 function toRecycleItem(p: BackendPost): RecycleItem {
   return {
     title: p.title ?? `게시글 ${p.id}`,
     image: p.imageUrl || "/recycle-placeholder.png",
-    steps: extractStepsFromContent(p.content),
+    content: p.content,
   };
 }
 
