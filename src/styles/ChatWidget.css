@@ -1,8 +1,7 @@
 .gm-chat-fab {
   position: fixed; right: 20px; bottom: 20px;
   width: 56px; height: 56px; border-radius: 50%; 
-  border: solid; border-color: rgb(16, 115, 67); cursor: pointer; font-size: 22px;
-  border-width: 2px;
+  border: 2px solid rgb(16, 115, 67); cursor: pointer; font-size: 22px;
   background: #67c36b; color: #fff; box-shadow: 0 8px 22px rgba(0,0,0,.15);
 }
 
