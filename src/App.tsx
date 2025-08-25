@@ -29,8 +29,8 @@ function App() {
           <Route path="create" element={<CreatePost />} />
           <Route path=":id" element={<DetailPost />} />
         </Route>
-        <Route path="/widget" element={<ChatWidget />} />
       </Routes>
+      <ChatWidget />
     </BrowserRouter>
   );
 }

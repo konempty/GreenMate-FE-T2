@@ -72,7 +72,7 @@ export default function ChatWidget() {
           aria-label="챗봇 열기"
           onClick={() => setOpen(true)}
         >
-          🤖
+          🗯️
         </button>
       )}
 
