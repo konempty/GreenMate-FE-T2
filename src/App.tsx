@@ -10,6 +10,7 @@ import CreatePost from "./pages/CreatePost";
 import CommunityNew from "./pages/CommunityNew";
 
 import DetailPost from "./pages/DetailPost";
+import ChatWidget from "./components/ChatWidget";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path=":id" element={<DetailPost />} />
         </Route>
       </Routes>
+      <ChatWidget />
     </BrowserRouter>
   );
 }
