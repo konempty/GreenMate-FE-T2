@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Header from "../components/Header";
@@ -35,8 +35,20 @@ const CreatePost = () => {
     null,
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false); // 성공적으로 제출 완료된 상태
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const currentRequestRef = useRef<AbortController | null>(null);
+
+  // 컴포넌트 언마운트 시 진행 중인 요청 취소
+  useEffect(() => {
+    return () => {
+      if (currentRequestRef.current) {
+        currentRequestRef.current.abort();
+      }
+    };
+  }, []);
 
   const getCurrentDate = () => {
     const today = new Date();
@@ -164,9 +176,20 @@ const CreatePost = () => {
       return;
     }
 
-    if (isSubmitting) {
+    // 이미 제출 중이거나 제출 완료된 경우 중복 제출 방지
+    if (isSubmitting || isSubmitted) {
+      console.log("이미 제출 중이거나 제출 완료되었습니다.");
       return;
     }
+
+    // 기존 요청이 있다면 취소
+    if (currentRequestRef.current) {
+      currentRequestRef.current.abort();
+    }
+
+    // 새로운 AbortController 생성
+    const abortController = new AbortController();
+    currentRequestRef.current = abortController;
 
     setIsSubmitting(true);
 
@@ -202,18 +225,47 @@ const CreatePost = () => {
         // 이미지 파일 추출
         const imageFiles: File[] = images.map((imageData) => imageData.file);
 
+        // 요청이 취소되었는지 확인
+        if (abortController.signal.aborted) {
+          console.log("요청이 취소되었습니다.");
+          return;
+        }
+
         // API 호출
-        const response = await createGreenTeamPost(requestData, imageFiles);
+        const response = await createGreenTeamPost(
+          requestData,
+          imageFiles,
+          abortController.signal,
+        );
+
+        // 요청이 취소되었는지 다시 확인 (응답을 받은 후)
+        if (abortController.signal.aborted) {
+          console.log("요청이 취소되었습니다.");
+          return;
+        }
 
         console.log("모집글이 성공적으로 생성되었습니다. ID:", response.id);
+
+        // 성공 상태 설정
+        setIsSubmitted(true);
 
         // 성공 시 게시글 목록 페이지로 이동
         void navigate("/post");
       } catch (error) {
+        // AbortError는 의도적인 취소이므로 에러로 처리하지 않음
+        if (error instanceof Error && error.name === "AbortError") {
+          console.log("요청이 취소되었습니다.");
+          return;
+        }
+
         console.error("모집글 생성 중 오류가 발생했습니다:", error);
         // 에러 처리 - 사용자에게 알림
         alert("모집글 생성 중 오류가 발생했습니다. 다시 시도해주세요.");
       } finally {
+        // 요청이 완료되었으므로 ref 초기화
+        if (currentRequestRef.current === abortController) {
+          currentRequestRef.current = null;
+        }
         setIsSubmitting(false);
       }
     };
@@ -433,9 +485,13 @@ const CreatePost = () => {
             <Button
               type="submit"
               className="create-post-submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isSubmitted}
             >
-              {isSubmitting ? "작성 중..." : "작성 완료"}
+              {isSubmitted
+                ? "작성 완료됨"
+                : isSubmitting
+                  ? "작성 중..."
+                  : "작성 완료"}
             </Button>
           </div>
         </form>

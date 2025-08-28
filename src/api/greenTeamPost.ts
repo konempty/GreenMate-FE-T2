@@ -36,6 +36,7 @@ export interface IdResponse {
 export async function createGreenTeamPost(
   data: GreenTeamPostCreateRequest,
   images?: File[],
+  abortSignal?: AbortSignal,
 ): Promise<IdResponse> {
   const formData = new FormData();
 
@@ -52,7 +53,13 @@ export async function createGreenTeamPost(
     });
   }
 
-  const response = await api.post<IdResponse>("/v1/green-team-posts", formData);
+  const response = await api.post<IdResponse>(
+    "/v1/green-team-posts",
+    formData,
+    {
+      signal: abortSignal,
+    },
+  );
 
   return response.data;
 }
