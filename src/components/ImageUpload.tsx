@@ -17,10 +17,7 @@ const ImageUpload = ({
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const maxSizeInBytes = 1024 * 1024; // 1MB
-      const allowedTypes = [
-        "image/jpeg",
-        "image/png",
-      ];
+      const allowedTypes = ["image/jpeg", "image/png"];
 
       const validFiles: File[] = [];
       const invalidFiles: string[] = [];
