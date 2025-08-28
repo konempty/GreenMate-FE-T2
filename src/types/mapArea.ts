@@ -10,6 +10,7 @@ export interface CircleData {
 
 // 새로운 AreaData 구조
 export interface AreaData {
+  type?: "circle" | "polygon";
   data?: CircleData;
   points?: Point[];
 }
