@@ -229,7 +229,7 @@ export default function Profile() {
             {data.profileImageUrl ? (
               <img
                 src={data.profileImageUrl}
-                alt=""
+                alt={`${data.nickname}님의 프로필 이미지`}
                 className="pf-avatar-img"
               />
             ) : (
@@ -294,6 +294,7 @@ export default function Profile() {
                   className="pf-post-card"
                   onClick={() => void navigate(`/community/${p.id}`)}
                   role="button"
+                  tabIndex={0}
                 >
                   <h3 className="pf-post-title">{p.title}</h3>
                   <p className="pf-post-excerpt">{p.excerpt}</p>
@@ -302,9 +303,9 @@ export default function Profile() {
                     <div className="pf-post-thumbs">
                       {p.thumbnailUrls.slice(0, 2).map((url, i) => (
                         <img
-                          key={i}
+                          key={`${url}-${i}`}
                           src={url || "/default-thumb.png"}
-                          alt=""
+                          alt={`${p.title} 썸네일 ${i + 1}`}
                           className="pf-thumb-img"
                         />
                       ))}
@@ -332,18 +333,25 @@ export default function Profile() {
             <button
               className="pf-withdraw"
               onClick={() => {
-                if (
-                  !window.confirm(
-                    "정말 탈퇴하시겠어요?\n커뮤니티 글/댓글은 삭제되고, 환경 활동 기록은 ‘탈퇴한 유저’로 표시되어 남습니다.",
-                  )
-                )
-                  return;
-                void requestWithdraw().then((ok) => {
-                  if (ok) {
-                    alert("탈퇴가 완료되었습니다.");
-                    void navigate("/");
+                void (async () => {
+                  if (
+                    !window.confirm(
+                      "정말 탈퇴하시겠어요?\n커뮤니티 글/댓글은 삭제되고, 환경 활동 기록은 ‘탈퇴한 유저’로 표시되어 남습니다.",
+                    )
+                  ) {
+                    return;
                   }
-                });
+                  try {
+                    const ok = await requestWithdraw();
+                    if (ok) {
+                      alert("탈퇴가 완료되었습니다.");
+                      void navigate("/");
+                    }
+                  } catch (error) {
+                    console.error("회원 탈퇴 실패:", error);
+                    alert("탈퇴 처리 중 오류가 발생했습니다.");
+                  }
+                })();
               }}
             >
               회원탈퇴
