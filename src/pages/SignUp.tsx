@@ -2,26 +2,120 @@ import { Input } from "../components/SignInput";
 import { Label } from "../components/label";
 import { Button } from "../components/SignButton";
 import { Leaf, Upload } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 
+import { signUp } from "@/api/auth";
+import { getErrorMessage } from "@/lib/http-error";
 import "../styles/SignUp.css";
 
-const SignUp = () => {
+/** term 목록 .. 지금은 예시로 필수 2개만 하드코딩. */
+const REQUIRED_TERMS = [
+  { id: 1, label: "이용약관(필수)" },
+  { id: 2, label: "개인정보 수집/이용(필수)" },
+];
+
+const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const nicknameRe = /^[\wㄱ-ㅎ가-힣]{2,10}$/; // 2~10자 한/영/숫자/_
+const passwordRe = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*]{8,100}$/;
+
+export default function SignUp() {
+  const nav = useNavigate();
+
+  const [email, setEmail] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [selfIntro, setSelfIntro] = useState("");
+
+  const [agreements, setAgreements] = useState<Record<number, boolean>>(
+    Object.fromEntries(REQUIRED_TERMS.map((t) => [t.id, false])),
+  );
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
+    const f = e.target.files?.[0] ?? null;
+    setFile(f);
+    setPreviewUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return f ? URL.createObjectURL(f) : null;
+    });
+  };
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
+
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const controllerRef = useRef<AbortController | null>(null);
+
+  const toggleAgreement = (id: number) =>
+    setAgreements((prev) => ({ ...prev, [id]: !prev[id] }));
+
+  const validate = () => {
+    if (!emailRe.test(email)) return "이메일 형식이 올바르지 않습니다.";
+    if (!nicknameRe.test(nickname))
+      return "닉네임은 2~10자/한영숫자만 가능합니다.";
+    if (!passwordRe.test(password))
+      return "비밀번호는 영문+숫자를 포함하여 8자 이상이어야 합니다.";
+    if (password !== passwordConfirm) return "비밀번호가 일치하지 않습니다.";
+    for (const t of REQUIRED_TERMS) {
+      if (!agreements[t.id]) return `${t.label}에 동의가 필요합니다.`;
+    }
+    if (selfIntro.length > 300) return "자기소개는 300자 이하여야 합니다.";
+    return null;
+  };
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    const v = validate();
+    if (v) {
+      setError(v);
+      return;
+    }
+
+    controllerRef.current?.abort();
+    controllerRef.current = new AbortController();
+
+    setSubmitting(true);
+    try {
+      await signUp(
+        {
+          userInfo: {
+            email,
+            password,
+            nickname,
+            selfIntroduction: selfIntro || undefined,
+            signUpTermAgreements: REQUIRED_TERMS.map((t) => ({
+              termId: t.id,
+              agreed: !!agreements[t.id],
+            })),
+          },
+          profileImage: file ?? undefined,
+        },
+        controllerRef.current.signal,
+      );
+
+      alert("회원가입이 완료되었습니다. 로그인 해주세요.");
+      void nav("/login", { replace: true, state: { email } });
+    } catch (err: unknown) {
+      setError(getErrorMessage(err));
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
     <div className="signup-container">
-      <div className="signup-card">
+      <form className="signup-card" onSubmit={void onSubmit}>
         <div className="signup-logo">
           <Leaf className="signup-leaf-icon" />
           <h1 className="signup-title">GreenMate</h1>
@@ -40,10 +134,13 @@ const SignUp = () => {
               id="nickname"
               placeholder="홍길동"
               className="signup-input"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+              maxLength={10}
+              required
             />
             <Button type="button" className="signup-check-btn">
-              {" "}
-              중복 확인{" "}
+              중복 확인
             </Button>
           </div>
         </div>
@@ -57,6 +154,10 @@ const SignUp = () => {
             type="email"
             placeholder="your@email.com"
             className="signup-input"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            maxLength={100}
+            required
           />
         </div>
 
@@ -64,7 +165,15 @@ const SignUp = () => {
           <Label htmlFor="password" className="signup-label">
             비밀번호
           </Label>
-          <Input id="password" type="password" className="signup-input" />
+          <Input
+            id="password"
+            type="password"
+            className="signup-input"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            maxLength={100}
+            required
+          />
         </div>
 
         <div className="signup-field">
@@ -75,7 +184,44 @@ const SignUp = () => {
             id="passwordConfirm"
             type="password"
             className="signup-input"
+            value={passwordConfirm}
+            onChange={(e) => setPasswordConfirm(e.target.value)}
+            maxLength={100}
+            required
           />
+        </div>
+
+        <div className="signup-field">
+          <Label htmlFor="selfIntro" className="signup-label">
+            자기소개(선택)
+          </Label>
+          <textarea
+            id="selfIntro"
+            className="signup-input"
+            rows={3}
+            value={selfIntro}
+            onChange={(e) => setSelfIntro(e.target.value)}
+            maxLength={300}
+            placeholder="안녕하세요! 제가 바로 길거리 청소왕입니다."
+          />
+        </div>
+
+        {/* 약관 동의 */}
+        <div className="signup-field">
+          <Label className="signup-label">약관 동의</Label>
+          <div className="signup-terms">
+            {REQUIRED_TERMS.map((t) => (
+              <label key={t.id} className="term-row">
+                <input
+                  type="checkbox"
+                  checked={!!agreements[t.id]}
+                  onChange={() => toggleAgreement(t.id)}
+                  required
+                />
+                {t.label}
+              </label>
+            ))}
+          </div>
         </div>
 
         <div className="signup-field">
@@ -98,22 +244,31 @@ const SignUp = () => {
             <Upload width="20px" height="20px" />
             이미지 업로드
           </Button>
+
           {previewUrl && (
             <img
               src={previewUrl}
               alt="미리보기"
               style={{
                 marginTop: "1rem",
-                width: "100px",
-                height: "100px",
+                width: 100,
+                height: 100,
                 objectFit: "cover",
-                borderRadius: "8px",
+                borderRadius: 8,
               }}
             />
           )}
         </div>
 
-        <Button className="signup-submit">회원가입</Button>
+        {error && (
+          <div className="error" style={{ color: "#c62828" }}>
+            에러: {error}
+          </div>
+        )}
+
+        <Button type="submit" className="signup-submit" disabled={submitting}>
+          {submitting ? "가입 중…" : "회원가입"}
+        </Button>
 
         <div className="signup-footer">
           이미 계정이 있으신가요?{" "}
@@ -121,13 +276,7 @@ const SignUp = () => {
             로그인
           </Link>
         </div>
-
-        {/* <p className="signup-login-link">
-          이미 계정이 있으신가요? <Link to="/login">로그인</Link>
-        </p> */}
-      </div>
+      </form>
     </div>
   );
-};
-
-export default SignUp;
+}
