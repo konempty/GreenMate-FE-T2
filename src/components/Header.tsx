@@ -72,25 +72,6 @@ const Email = styled.div`
   margin-bottom: 12px;
 `;
 
-// const LogoutButton = styled.div`
-//   display: flex;
-//   align-items: center;
-//   cursor: pointer;
-//   padding: 0.25rem 0rem;
-//   font-size: 0.875rem;
-
-//   &:hover {
-//     background-color: #f3f4f6;
-//   }
-
-//   svg {
-//     margin-right: 8px;
-//     color: #4b5563;
-//     width: 18px;
-//     height: 18px;
-//   }
-// `;
-/* 공통 버튼 스타일 */
 const DropdownButton = styled.div`
   display: flex;
   align-items: center;
