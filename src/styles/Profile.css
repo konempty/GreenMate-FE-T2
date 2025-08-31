@@ -37,7 +37,6 @@
 .pf-withdraw{
   height:32px; padding:0 10px; background:#afafaf; color:#fff;
   border:none; border-radius:8px; font-weight:400; cursor:pointer;
-  display: center;
 }
 .pf-withdraw-wrap {
   margin-top: 24px;
