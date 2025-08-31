@@ -11,6 +11,7 @@ import CommunityNew from "./pages/CommunityNew";
 
 import DetailPost from "./pages/DetailPost";
 import ChatWidget from "./components/ChatWidget";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -28,6 +29,10 @@ function App() {
           <Route index element={<Post />} />
           <Route path="create" element={<CreatePost />} />
           <Route path=":id" element={<DetailPost />} />
+        </Route>
+        <Route path="/profile">
+          <Route path=":userId" element={<Profile />} />
+          <Route path="me" element={<Profile />} />
         </Route>
       </Routes>
       <ChatWidget />
