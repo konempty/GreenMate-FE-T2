@@ -16,8 +16,14 @@ const ImageUpload = ({
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const maxSizeInBytes = 1024 * 1024; // 1MB
-      const allowedTypes = ["image/jpeg", "image/png"];
+      const maxSizeInBytes = 1000 * 1000; // 1MB
+      const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/jpg",
+        "image/webp",
+        "image/avif",
+      ];
 
       const validFiles: File[] = [];
       const invalidFiles: string[] = [];
@@ -26,7 +32,7 @@ const ImageUpload = ({
         // 파일 크기 검증
         if (file.size > maxSizeInBytes) {
           invalidFiles.push(
-            `${file.name}: 파일 크기가 1MB를 초과합니다. (${(file.size / 1024 / 1024).toFixed(2)}MB)`,
+            `${file.name}: 파일 크기가 1MB를 초과합니다. (${(file.size / 1000 / 1000).toFixed(2)}MB)`,
           );
           return;
         }
@@ -34,7 +40,7 @@ const ImageUpload = ({
         // MIME 타입 검증
         if (!allowedTypes.includes(file.type)) {
           invalidFiles.push(
-            `${file.name}: 지원하지 않는 파일 형식입니다. (JPG, PNG 만 허용)`,
+            `${file.name}: 지원하지 않는 파일 형식입니다. (JPG, PNG, JPEG, WEBP, AVIF 만 허용)`,
           );
           return;
         }
@@ -83,7 +89,7 @@ const ImageUpload = ({
       <div className="image-upload-info">
         선택된 파일 : {images.length}개
         <span className="image-upload-limit">
-          (최대 {maxImages}개, 파일당 1MB 이하, JPG/PNG 지원)
+          (최대 {maxImages}개, 파일당 1MB 이하, JPG/PNG/JPEG/WEBP/AVIF 지원)
         </span>
       </div>
       <div className="image-upload-container">
