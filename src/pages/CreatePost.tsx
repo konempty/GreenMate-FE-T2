@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Header from "../components/Header";
@@ -11,6 +11,11 @@ import ImageUpload from "../components/ImageUpload";
 import CreateMapArea from "../components/CreateMapArea";
 import type { AreaData } from "../types/mapArea";
 import type { ImageData } from "../types/imageUpload";
+import {
+  createGreenTeamPost,
+  type GreenTeamPostCreateRequest,
+  type GeoJSON,
+} from "../api/greenTeamPost";
 
 import "../styles/CreatePost.css";
 
@@ -25,9 +30,25 @@ const CreatePost = () => {
   const [time, setTime] = useState("");
   const [activityDate, setActivityDate] = useState("");
   const [maxParticipants, setMaxParticipants] = useState("");
-  const [areaData, setAreaData] = useState<AreaData>(null);
+  const [areaData, setAreaData] = useState<AreaData | null>(null);
+  const [locationType, setLocationType] = useState<"CIRCLE" | "POLYGON" | null>(
+    null,
+  );
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false); // 성공적으로 제출 완료된 상태
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const currentRequestRef = useRef<AbortController | null>(null);
+
+  // 컴포넌트 언마운트 시 진행 중인 요청 취소
+  useEffect(() => {
+    return () => {
+      if (currentRequestRef.current) {
+        currentRequestRef.current.abort();
+      }
+    };
+  }, []);
 
   const getCurrentDate = () => {
     const today = new Date();
@@ -41,8 +62,12 @@ const CreatePost = () => {
     setImages(newImages);
   };
 
-  const handleAreaChange = (newAreaData: AreaData) => {
+  const handleAreaChange = (
+    newAreaData: AreaData | null,
+    newLocationType: "CIRCLE" | "POLYGON" | null,
+  ) => {
     setAreaData(newAreaData);
+    setLocationType(newLocationType);
     if (newAreaData) {
       setErrors((prev) => ({ ...prev, area: "" }));
     }
@@ -50,6 +75,35 @@ const CreatePost = () => {
 
   const handleCancel = () => {
     void navigate("/post");
+  };
+
+  // 날짜와 시간을 ISO 8601 형식으로 변환하는 헬퍼 함수
+  const formatDateTime = (date: string, time: string): string => {
+    return `${date}T${time}:00`;
+  };
+
+  // AreaData를 백엔드 형식에 맞게 변환하는 헬퍼 함수
+  const convertAreaDataToGeoJson = (
+    areaData: AreaData,
+    locationType: "CIRCLE" | "POLYGON",
+  ): GeoJSON | null => {
+    if (locationType === "CIRCLE" && areaData.data) {
+      return {
+        center: {
+          lat: areaData.data.center.lat,
+          lng: areaData.data.center.lng,
+        },
+        radius: areaData.data.radius,
+      };
+    } else if (locationType === "POLYGON" && areaData.points) {
+      return {
+        points: areaData.points.map((point) => ({
+          lat: point.lat,
+          lng: point.lng,
+        })),
+      };
+    }
+    return null;
   };
 
   const validateForm = () => {
@@ -96,8 +150,19 @@ const CreatePost = () => {
       }
     }
 
-    if (!areaData) {
+    // 활동 영역 검증
+    if (!areaData || !locationType) {
       newErrors.area = "활동영역을 설정해주세요.";
+    }
+
+    // 활동일과 마감일 검증
+    if (activityDate && date && time) {
+      const activityDateTime = new Date(`${activityDate}T10:00:00`);
+      const deadlineDateTime = new Date(`${date}T${time}:00`);
+
+      if (deadlineDateTime.getTime() >= activityDateTime.getTime()) {
+        newErrors.datetime = "신청 마감일은 활동일보다 이전이어야 합니다.";
+      }
     }
 
     setErrors(newErrors);
@@ -111,17 +176,101 @@ const CreatePost = () => {
       return;
     }
 
-    console.log({
-      title,
-      description,
-      images,
-      date,
-      time,
-      activityDate,
-      maxParticipants: parseInt(maxParticipants),
-      areaData,
-    });
-    void navigate("/post");
+    // 이미 제출 중이거나 제출 완료된 경우 중복 제출 방지
+    if (isSubmitting || isSubmitted) {
+      console.log("이미 제출 중이거나 제출 완료되었습니다.");
+      return;
+    }
+
+    // 기존 요청이 있다면 취소
+    if (currentRequestRef.current) {
+      currentRequestRef.current.abort();
+    }
+
+    // 새로운 AbortController 생성
+    const abortController = new AbortController();
+    currentRequestRef.current = abortController;
+
+    setIsSubmitting(true);
+
+    // async 함수를 별도로 정의하고 호출
+    const submitForm = async () => {
+      try {
+        // 유효성 검사
+        if (!areaData || !locationType) {
+          alert("활동 지역을 설정해주세요.");
+          return;
+        }
+
+        // 백엔드 API에 맞는 데이터 구조로 변환
+        const locationGeojson = convertAreaDataToGeoJson(
+          areaData,
+          locationType,
+        );
+        if (!locationGeojson) {
+          alert("지역 데이터를 변환하는 중 오류가 발생했습니다.");
+          return;
+        }
+
+        const requestData: GreenTeamPostCreateRequest = {
+          title: title.trim(),
+          content: description.trim(),
+          locationType: locationType,
+          locationGeojson: locationGeojson,
+          maxParticipants: parseInt(maxParticipants),
+          eventDate: formatDateTime(activityDate, "10:00"), // 기본 시간 설정
+          deadlineAt: formatDateTime(date, time),
+        };
+
+        // 이미지 파일 추출
+        const imageFiles: File[] = images.map((imageData) => imageData.file);
+
+        // 요청이 취소되었는지 확인
+        if (abortController.signal.aborted) {
+          console.log("요청이 취소되었습니다.");
+          return;
+        }
+
+        // API 호출
+        const response = await createGreenTeamPost(
+          requestData,
+          imageFiles,
+          abortController.signal,
+        );
+
+        // 요청이 취소되었는지 다시 확인 (응답을 받은 후)
+        if (abortController.signal.aborted) {
+          console.log("요청이 취소되었습니다.");
+          return;
+        }
+
+        console.log("모집글이 성공적으로 생성되었습니다. ID:", response.id);
+
+        // 성공 상태 설정
+        setIsSubmitted(true);
+
+        // 성공 시 게시글 목록 페이지로 이동
+        void navigate("/post");
+      } catch (error) {
+        // AbortError는 의도적인 취소이므로 에러로 처리하지 않음
+        if (error instanceof Error && error.name === "AbortError") {
+          console.log("요청이 취소되었습니다.");
+          return;
+        }
+
+        console.error("모집글 생성 중 오류가 발생했습니다:", error);
+        // 에러 처리 - 사용자에게 알림
+        alert("모집글 생성 중 오류가 발생했습니다. 다시 시도해주세요.");
+      } finally {
+        // 요청이 완료되었으므로 ref 초기화
+        if (currentRequestRef.current === abortController) {
+          currentRequestRef.current = null;
+        }
+        setIsSubmitting(false);
+      }
+    };
+
+    void submitForm();
   };
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -329,11 +478,20 @@ const CreatePost = () => {
               type="button"
               className="create-post-cancel"
               onClick={handleCancel}
+              disabled={isSubmitting}
             >
               취소
             </Button>
-            <Button type="submit" className="create-post-submit">
-              작성 완료
+            <Button
+              type="submit"
+              className="create-post-submit"
+              disabled={isSubmitting || isSubmitted}
+            >
+              {isSubmitted
+                ? "작성 완료됨"
+                : isSubmitting
+                  ? "작성 중..."
+                  : "작성 완료"}
             </Button>
           </div>
         </form>

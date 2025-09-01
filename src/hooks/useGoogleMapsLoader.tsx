@@ -16,7 +16,7 @@ export const useGoogleMapsLoader = (): UseGoogleMapsLoaderReturn => {
 
   useEffect(() => {
     let isMounted = true;
-    let progressInterval: number;
+    let progressInterval: ReturnType<typeof setInterval>;
 
     const loadGoogleMaps = async () => {
       try {
