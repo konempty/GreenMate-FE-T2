@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
-import { Leaf, LogOut } from "lucide-react";
+import { Leaf, LogOut, User } from "lucide-react";
 import profileImage from "./images/profile.jpg";
+import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   user?: {
@@ -71,12 +72,13 @@ const Email = styled.div`
   margin-bottom: 12px;
 `;
 
-const LogoutButton = styled.div`
+const DropdownButton = styled.div`
   display: flex;
   align-items: center;
   cursor: pointer;
-  padding: 0.25rem 0rem;
+  padding: 0.4rem 0.2rem;
   font-size: 0.875rem;
+  border-radius: 6px;
 
   &:hover {
     background-color: #f3f4f6;
@@ -93,6 +95,7 @@ const LogoutButton = styled.div`
 const Header = ({ user }: HeaderProps) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   const defaultUser = {
     nickname: "konempty",
@@ -138,9 +141,12 @@ const Header = ({ user }: HeaderProps) => {
           <Dropdown>
             <Nickname>{currentUser.nickname}</Nickname>
             <Email>{currentUser.email}</Email>
-            <LogoutButton onClick={handleLogout}>
+            <DropdownButton onClick={() => void navigate("/profile/me")}>
+              <User /> 마이페이지
+            </DropdownButton>
+            <DropdownButton onClick={handleLogout}>
               <LogOut /> 로그아웃
-            </LogoutButton>
+            </DropdownButton>
           </Dropdown>
         )}
       </ProfileWrapper>
