@@ -72,7 +72,8 @@ export default function SignUp() {
     return null;
   };
 
-  const onSubmit = async (e: React.FormEvent) => {
+  // async 핸들러는 유지
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
 
@@ -115,7 +116,12 @@ export default function SignUp() {
 
   return (
     <div className="signup-container">
-      <form className="signup-card" onSubmit={void onSubmit}>
+      <form
+        className="signup-card"
+        onSubmit={(e) => {
+          void onSubmit(e);
+        }}
+      >
         <div className="signup-logo">
           <Leaf className="signup-leaf-icon" />
           <h1 className="signup-title">GreenMate</h1>
@@ -125,6 +131,7 @@ export default function SignUp() {
           환경 운동가들을 위한 커뮤니티에 가입하세요
         </p>
 
+        {/* 닉네임 */}
         <div className="signup-field">
           <Label htmlFor="nickname" className="signup-label">
             닉네임
@@ -145,6 +152,7 @@ export default function SignUp() {
           </div>
         </div>
 
+        {/* 이메일 */}
         <div className="signup-field">
           <Label htmlFor="email" className="signup-label">
             이메일
@@ -161,6 +169,7 @@ export default function SignUp() {
           />
         </div>
 
+        {/* 비밀번호 */}
         <div className="signup-field">
           <Label htmlFor="password" className="signup-label">
             비밀번호
@@ -176,6 +185,7 @@ export default function SignUp() {
           />
         </div>
 
+        {/* 비밀번호 확인 */}
         <div className="signup-field">
           <Label htmlFor="passwordConfirm" className="signup-label">
             비밀번호 확인
@@ -191,6 +201,7 @@ export default function SignUp() {
           />
         </div>
 
+        {/* 자기소개 */}
         <div className="signup-field">
           <Label htmlFor="selfIntro" className="signup-label">
             자기소개(선택)
@@ -224,6 +235,7 @@ export default function SignUp() {
           </div>
         </div>
 
+        {/* 프로필 이미지 */}
         <div className="signup-field">
           <Label htmlFor="profileImage" className="signup-label">
             프로필 이미지
@@ -260,12 +272,14 @@ export default function SignUp() {
           )}
         </div>
 
+        {/* 에러 */}
         {error && (
           <div className="error" style={{ color: "#c62828" }}>
             에러: {error}
           </div>
         )}
 
+        {/* 제출 */}
         <Button type="submit" className="signup-submit" disabled={submitting}>
           {submitting ? "가입 중…" : "회원가입"}
         </Button>

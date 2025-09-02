@@ -18,18 +18,14 @@ export interface SignUpPayload {
   profileImage?: File | null; // 옵션
 }
 
-/**
- * 회원가입 (multipart/form-data)
- * - field "userInfo": JSON
- * - field "profileImage": 파일(optional)
- */
-export async function signUp(payload: SignUpPayload, signal?: AbortSignal) {
+export async function signUp(
+  payload: SignUpPayload,
+  signal?: AbortSignal,
+): Promise<void> {
   const fd = new FormData();
 
-  fd.append(
-    "userInfo",
-    new Blob([JSON.stringify(payload.userInfo)], { type: "application/json" }),
-  );
+  // 문자열 JSON으로 넣기
+  fd.append("userInfo", JSON.stringify(payload.userInfo));
 
   if (payload.profileImage) {
     fd.append("profileImage", payload.profileImage);
