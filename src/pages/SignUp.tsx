@@ -5,7 +5,7 @@ import { Leaf, Upload } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 
-import { signUp } from "@/api/auth";
+import { signUp, checkNickname } from "@/api/auth";
 import { getErrorMessage } from "@/lib/http-error";
 import "../styles/SignUp.css";
 
@@ -55,6 +55,19 @@ export default function SignUp() {
   const [error, setError] = useState<string | null>(null);
   const controllerRef = useRef<AbortController | null>(null);
 
+  // 닉네임 중복 확인 관련 상태
+  const [nickChecking, setNickChecking] = useState(false);
+  const [nickAvailable, setNickAvailable] = useState<boolean | null>(null);
+  const [nickCheckedNick, setNickCheckedNick] = useState("");
+  const [nickMsg, setNickMsg] = useState<string | null>(null);
+
+  // 닉네임이 바뀌면 이전 확인 결과 초기화
+  useEffect(() => {
+    setNickAvailable(null);
+    setNickCheckedNick("");
+    setNickMsg(null);
+  }, [nickname]);
+
   const toggleAgreement = (id: number) =>
     setAgreements((prev) => ({ ...prev, [id]: !prev[id] }));
 
@@ -62,6 +75,11 @@ export default function SignUp() {
     if (!emailRe.test(email)) return "이메일 형식이 올바르지 않습니다.";
     if (!nicknameRe.test(nickname))
       return "닉네임은 2~10자/한영숫자만 가능합니다.";
+    if (nickAvailable === false && nickCheckedNick === nickname)
+      return "이미 사용 중인 닉네임입니다.";
+    if (nickAvailable !== true || nickCheckedNick !== nickname) {
+      return "닉네임 중복 확인을 해주세요.";
+    }
     if (!passwordRe.test(password))
       return "비밀번호는 영문+숫자를 포함하여 8자 이상이어야 합니다.";
     if (password !== passwordConfirm) return "비밀번호가 일치하지 않습니다.";
@@ -70,6 +88,37 @@ export default function SignUp() {
     }
     if (selfIntro.length > 300) return "자기소개는 300자 이하여야 합니다.";
     return null;
+  };
+
+  // ✅ 닉네임 중복 확인 핸들러
+  const onCheckNickname = async () => {
+    const name = nickname.trim();
+    if (!nicknameRe.test(name)) {
+      setNickMsg("닉네임 형식이 올바르지 않습니다. (2~10자, 한영/숫자/_)");
+      setNickAvailable(null);
+      return;
+    }
+    setNickChecking(true);
+    setNickMsg(null);
+    try {
+      const result = await checkNickname(name);
+      setNickCheckedNick(name);
+      if (result === "available") {
+        setNickAvailable(true);
+        setNickMsg("사용 가능한 닉네임입니다.");
+      } else if (result === "duplicate") {
+        setNickAvailable(false);
+        setNickMsg("이미 사용 중인 닉네임입니다.");
+      } else {
+        setNickAvailable(null);
+        setNickMsg("닉네임 확인에 실패했습니다. 다시 시도해주세요.");
+      }
+    } catch (err) {
+      setNickAvailable(null);
+      setNickMsg(getErrorMessage(err));
+    } finally {
+      setNickChecking(false);
+    }
   };
 
   // async 핸들러는 유지
@@ -146,10 +195,28 @@ export default function SignUp() {
               maxLength={10}
               required
             />
-            <Button type="button" className="signup-check-btn">
+            <Button
+              type="button"
+              className="signup-check-btn"
+              onClick={() => {
+                void onCheckNickname();
+              }}
+              disabled={nickChecking || !nickname.trim()}
+            >
               중복 확인
             </Button>
           </div>
+          {nickMsg && (
+            <div
+              style={{
+                marginTop: 8,
+                fontSize: 13,
+                color: nickAvailable ? "#1b5e20" : "#c62828",
+              }}
+            >
+              {nickMsg}
+            </div>
+          )}
         </div>
 
         {/* 이메일 */}
@@ -280,7 +347,13 @@ export default function SignUp() {
         )}
 
         {/* 제출 */}
-        <Button type="submit" className="signup-submit" disabled={submitting}>
+        <Button
+          type="submit"
+          className="signup-submit"
+          disabled={
+            submitting || nickAvailable !== true || nickCheckedNick !== nickname
+          }
+        >
           {submitting ? "가입 중…" : "회원가입"}
         </Button>
 

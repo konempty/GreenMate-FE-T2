@@ -33,3 +33,28 @@ export async function signUp(
 
   await api.post("/v1/user/signup", fd, { signal });
 }
+
+/**
+ * 닉네임 중복 확인
+ * - 204  -> 사용 가능
+ * - 409            -> 중복
+ * - 그 외          -> 에러
+ */
+export async function checkNickname(
+  nickname: string,
+  signal?: AbortSignal,
+): Promise<"available" | "duplicate" | "invalid"> {
+  const res = await api.head(
+    `/v1/user/nicknames/${encodeURIComponent(nickname)}`,
+    {
+      signal,
+      validateStatus: () => true,
+    },
+  );
+
+  if (res.status === 204) return "available";
+  if (res.status === 409) return "duplicate";
+  if (res.status === 400) return "invalid";
+  // 나머지는 일단 invalid로 통일
+  return "invalid";
+}
