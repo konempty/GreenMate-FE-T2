@@ -43,7 +43,7 @@ export async function signUp(
 export async function checkNickname(
   nickname: string,
   signal?: AbortSignal,
-): Promise<"available" | "duplicate" | "invalid"> {
+): Promise<"available" | "duplicate" | "invalid" | "serverError"> {
   const res = await api.head(
     `/v1/user/nicknames/${encodeURIComponent(nickname)}`,
     {
@@ -55,6 +55,6 @@ export async function checkNickname(
   if (res.status === 204) return "available";
   if (res.status === 409) return "duplicate";
   if (res.status === 400) return "invalid";
-  // 나머지는 일단 invalid로 통일
+  if (res.status === 500) return "serverError";
   return "invalid";
 }

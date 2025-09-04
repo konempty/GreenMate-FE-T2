@@ -68,8 +68,17 @@ export default function SignUp() {
     setNickMsg(null);
   }, [nickname]);
 
-  const toggleAgreement = (id: number) =>
-    setAgreements((prev) => ({ ...prev, [id]: !prev[id] }));
+  const TERM_ID_SET = new Set(REQUIRED_TERMS.map((t) => t.id));
+
+  const toggleAgreement = (id: number) => {
+    setAgreements((prev) => {
+      if (!TERM_ID_SET.has(id)) {
+        console.warn("toggleAgreement: unknown term id:", id);
+        return prev; // 잘못된 id는 무시하자.
+      }
+      return { ...prev, [id]: !prev[id] };
+    });
+  };
 
   const validate = () => {
     if (!emailRe.test(email)) return "이메일 형식이 올바르지 않습니다.";
@@ -162,14 +171,14 @@ export default function SignUp() {
     }
   };
 
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    void onSubmit(e);
+  };
+
   return (
     <div className="signup-container">
-      <form
-        className="signup-card"
-        onSubmit={(e) => {
-          void onSubmit(e);
-        }}
-      >
+      <form className="signup-card" onSubmit={handleSubmit}>
         <div className="signup-logo">
           <Leaf className="signup-leaf-icon" />
           <h1 className="signup-title">GreenMate</h1>
@@ -208,7 +217,7 @@ export default function SignUp() {
           {nickMsg && (
             <div
               style={{
-                marginTop: 8,
+                marginTop: 3,
                 fontSize: 13,
                 color: nickAvailable ? "#1b5e20" : "#c62828",
               }}
