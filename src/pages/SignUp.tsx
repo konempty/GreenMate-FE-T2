@@ -90,11 +90,11 @@ export default function SignUp() {
     return null;
   };
 
-  // ✅ 닉네임 중복 확인 핸들러
+  // 닉네임 중복 확인 핸들러
   const onCheckNickname = async () => {
     const name = nickname.trim();
     if (!nicknameRe.test(name)) {
-      setNickMsg("닉네임 형식이 올바르지 않습니다. (2~10자, 한영/숫자/_)");
+      setNickMsg("닉네임 형식이 올바르지 않습니다.");
       setNickAvailable(null);
       return;
     }
@@ -121,7 +121,6 @@ export default function SignUp() {
     }
   };
 
-  // async 핸들러는 유지
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
