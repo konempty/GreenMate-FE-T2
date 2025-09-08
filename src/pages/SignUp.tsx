@@ -15,9 +15,9 @@ const REQUIRED_TERMS = [
   { id: 2, label: "개인정보 수집/이용(필수)" },
 ];
 
-const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const nicknameRe = /^[\wㄱ-ㅎ가-힣]{2,10}$/; // 2~10자 한/영/숫자/_
-const passwordRe = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*]{8,100}$/;
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const nicknameRegex = /^[\wㄱ-ㅎ가-힣]{2,10}$/;
+const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*]{8,100}$/;
 
 export default function SignUp() {
   const nav = useNavigate();
@@ -81,15 +81,15 @@ export default function SignUp() {
   };
 
   const validate = () => {
-    if (!emailRe.test(email)) return "이메일 형식이 올바르지 않습니다.";
-    if (!nicknameRe.test(nickname))
+    if (!emailRegex.test(email)) return "이메일 형식이 올바르지 않습니다.";
+    if (!nicknameRegex.test(nickname))
       return "닉네임은 2~10자/한영숫자만 가능합니다.";
     if (nickAvailable === false && nickCheckedNick === nickname)
       return "이미 사용 중인 닉네임입니다.";
     if (nickAvailable !== true || nickCheckedNick !== nickname) {
       return "닉네임 중복 확인을 해주세요.";
     }
-    if (!passwordRe.test(password))
+    if (!passwordRegex.test(password))
       return "비밀번호는 영문+숫자를 포함하여 8자 이상이어야 합니다.";
     if (password !== passwordConfirm) return "비밀번호가 일치하지 않습니다.";
     for (const t of REQUIRED_TERMS) {
@@ -102,7 +102,7 @@ export default function SignUp() {
   // 닉네임 중복 확인 핸들러
   const onCheckNickname = async () => {
     const name = nickname.trim();
-    if (!nicknameRe.test(name)) {
+    if (!nicknameRegex.test(name)) {
       setNickMsg("닉네임 형식이 올바르지 않습니다.");
       setNickAvailable(null);
       return;
